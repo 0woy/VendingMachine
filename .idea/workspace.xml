@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="20bedd70-200a-4112-8727-0ec4952a6734" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/VendingMachine.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/GUI/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/GUI/Manager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/1000won.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/100won.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/10won.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/500won.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/50won.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/soldout_고급커피.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/soldout_물.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/soldout_이온음료.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/soldout_커피.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/soldout_탄산음료.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/고급커피.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/물.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/이온음료.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/커피.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/탄산음료.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/투출구.png" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2QET1vVfCVlQ7gPNk7yV5fLVZWL" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Java_workspace/VendingMachine/src/Images",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.keymap",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Java_workspace\VendingMachine\src\Images" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Java_workspace\VendingMachine\src\Images" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="GUI.Main" />
+      <module name="VendingMachine" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="GUI.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="20bedd70-200a-4112-8727-0ec4952a6734" name="Changes" comment="" />
+      <created>1684917532202</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1684917532202</updated>
+      <workItem from="1684917533483" duration="3064000" />
+      <workItem from="1684924434985" duration="6622000" />
+      <workItem from="1684935467553" duration="6631000" />
+      <workItem from="1684949137860" duration="9415000" />
+      <workItem from="1685182695974" duration="41591000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/VendingMachine/VendingMachine.java</url>
+          <line>94</line>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
