@@ -15,19 +15,21 @@ import VendingMachine.Manager;
 
 public class StartMachine extends JFrame{
 
-    private Main main;
-    static Manager manager;
+    private Main main;              // GUI.Main 클래스
+    static Manager manager;         // 관리자 클래스
 
     private JPanel beveragePanel;   // 음료 구매 화면
     private JPanel userPanel;       // 잔돈 반환 & 화폐 투입
     private JPanel outPanel;        // 음료 투출
     private JPanel managePanel;     // 관리자 메뉴
-    private JPanel start;
+    private JPanel start;           // 자판기 화면
+    
     private VendingMachine vm;      // 음료 속성을 가져오기 위한 변수
     private JLabel cMoney;          // 현재 사용자가 투입 & 사용 금액
     private JButton[] beverage;
 
     public StartMachine(){
+        manager = new Manager();
         vm = new VendingMachine();
 
         setTitle("음료 자판기");
@@ -57,6 +59,7 @@ public class StartMachine extends JFrame{
         setVisible(true);
     }
 
+    // 음료 Panel
     public JPanel BeveragePanel(){
         JPanel beverage = new JPanel();
         beverage.setBackground(Color.lightGray);
@@ -67,7 +70,7 @@ public class StartMachine extends JFrame{
         return beverage;
     }
 
-    // 음료 재고 & 투입액별 음료 이미지 변환
+    // 음료 재고 상태 & 사용자 투입 금액에 따른 음료 이미지 변환
     public void changeImage(){
         for(int i=0;i<beverage.length;i++){
 
@@ -89,6 +92,7 @@ public class StartMachine extends JFrame{
         }
     }
 
+    // 음료 구매 Panel
     public JPanel selectBeverage(){
         JPanel select = new JPanel();
         GridLayout grid = new GridLayout(2,3);
@@ -150,6 +154,7 @@ public class StartMachine extends JFrame{
         return select;
     }
 
+    // 잔돈 반환 & 화폐 투입 Panel
     public JPanel userPanel(){
         JPanel user =new JPanel();
         //user.setPreferredSize(new Dimension(150,150));
@@ -187,22 +192,23 @@ public class StartMachine extends JFrame{
                     int[] returns = vm.getChanges();
                     int[] values = vm.moneyValues();
                     int sum =0;
-                    // 사용자에게 반환된 잔돈 알림창으로 표시
-                    StringBuilder message = new StringBuilder();
-                    
-                    // 화폐별로 반환된 개수 표시
-                    for (int i = 0; i < returns.length; i++) {
+
+                    StringBuilder message = new StringBuilder();    // 사용자에게 반환된 잔돈 알림창으로 표시
+
+                    for (int i = 0; i < returns.length; i++) {      // 화폐별로 반환된 개수 표시
                         sum +=values[i]*returns[i];
                         message.append(Integer.toString(values[i])).append("원: ")
                                 .append(returns[i]).append("개\n");
                     }
-                    message.append("총 반환액: "+sum+" 원"); // 총 반환된 금액 표시
+                    message.append("총 반환액: "+sum+" 원");          // 총 반환된 금액 표시
 
                     JOptionPane.showMessageDialog(null,
                             message.toString(),
                             "반환된 금액",
                             JOptionPane.INFORMATION_MESSAGE);
                     cMoney.setText("0원");   // 잔돈 반환 후 사용 가능 금액 초기화
+                    vm.freeInput();         // input 동적 할당 해제
+                    vm.setInput();          // 반환 후에도 음료를 구매할 수 있도록 input 동적할당
                     changeImage();
                 });
 
@@ -212,13 +218,13 @@ public class StartMachine extends JFrame{
         return user;
     }
 
+    // 투입할 화폐 선택 Panel
     public JPanel inputMoneyPanel(){
         JPanel input =new JPanel();
         int [] value = vm.moneyValues();
         JButton [] btn = new JButton[5];
 
         GridLayout grid = new GridLayout(1,6);
-      //  grid.setHgap(5);
         input.setLayout(grid);
         
         // 화폐 이미지 및 버튼 클릭시 자판기에 돈 투입
@@ -250,30 +256,33 @@ public class StartMachine extends JFrame{
         return input;
     }
 
+    // 관리자 메뉴 이동 Panel
     public JPanel toManage(){
         JPanel manage =new JPanel();
         manage.setLayout(new BorderLayout());
 
         JButton toManage = new JButton("관리자 메뉴");
-        Border border = BorderFactory.createEmptyBorder(0, 0, 10, 10); // Add padding here (top, left, bottom, right)
+        Border border = BorderFactory.createEmptyBorder(0, 0, 10, 10);
         manage.setBorder(border);
 
         manage.add(toManage,BorderLayout.EAST);
 
-        manage.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mousePressed(MouseEvent e){
-                super.mousePressed(e);
+        toManage.addActionListener(e -> {
                 String pw = JOptionPane.showInputDialog("비밀번호 입력:");
-                if(pw.equals(manage.getName())){
-                    new ManagerView().setMain(main);
+                if(pw.equals(manager.getPassword())){
+                    new ManagerView().changeView(main);
                 }
-            }
+                else{
+                    JOptionPane.showMessageDialog(null,
+                            "비밀번호가 일치하지 않습니다.",
+                            "관리자 인증 불가",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
         });
         return manage;
     }
 
+    // 투출구 Panel
     public JPanel outPanel() {
         JPanel out = new JPanel();
         ImageIcon image = new ImageIcon("src/Images/투출구.png");
@@ -288,7 +297,8 @@ public class StartMachine extends JFrame{
         return out;
     }
 
-    public void setMain(Main main){
+    // 관리자 메뉴 이동시 화면 변화
+    public void changeView(Main main){
         this.main = main;
     }
 

@@ -15,7 +15,7 @@ public class Main extends JFrame {
                 try {
                     Main main = new Main();
                     startPage = new StartMachine();
-                    startPage.setMain(main);
+                    startPage.changeView(main);
                 }catch (Exception e){
                     e.printStackTrace();
                 }

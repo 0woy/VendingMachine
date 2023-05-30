@@ -2,15 +2,15 @@ package VendingMachine;
 
 public class VendingMachine {
     private final int Max = 5000;   // 최대 투입 금액
-    private Integer input;          // 사용자가 투입한 금액 & 구매 후 남은 금액
-    protected int Sales;            //전체 일 매출액
-    protected int totalSales;       //전체 월 매출액
+    private Integer input;              // 사용자가 투입한 금액 & 구매 후 남은 금액
+    protected int Sales;            // 전체 일 매출액
+    protected int totalSales;       // 전체 월 매출액
     private int checkBill;          // 1000원권 최대 투입 개수
     private Change change;          // 자판기 내의 잔돈
     private Beverage [] beverage;
 
     public VendingMachine(){
-        this.input= Integer.valueOf(0);
+        this.input= Integer.valueOf(0); // 동적할당
         this.Sales=0;
         this.totalSales=0;
         this.checkBill = 0;
@@ -66,35 +66,33 @@ public class VendingMachine {
         return 2; // 정상 종료
     }
 
-    // 현재 사용자가 투입 & 남은 돈
+    // 현재 사용자가 투입 & 남은 돈 반환
     public int currentInput(){return input;}
     
     // 현재 음료의 재고
     public int currentStock(int idx){return beverage[idx].getStock();}
+
     // 음료 구입 기능
     public boolean buyBeverage(String name){
         for(int i =0;i<beverage.length;i++){
             if(beverage[i].getName().equals(name) ){
                 // 음료 재고가 없는 경우
-                if(beverage[i].getStock()<=0) {
-                    System.out.println("음료 재고가 없는 경우");
-                    return false;
-                }
+                if(beverage[i].getStock()<=0)   return false;
+
                 // 재고가 있는 경우
                 else {
-                    // 금액이 충분한 경우
+                    // 투입한 금액이 음료를 사기에 충분한 경우
                     if(input >= beverage[i].getPrice()) {
-                        input -= beverage[i].getPrice();
-                        Sales += beverage[i].getPrice();
-                        beverage[i].setSellCount();
-                        beverage[i].setStocks(-1);
+                        input -= beverage[i].getPrice();    // 음료 가격만큼 사용 금액 감소
+                        Sales += beverage[i].getPrice();    // 음료 가격만큼 판매액 증가
+                        beverage[i].setSellCount();         // 해당 음료 팔린 개수 증가
+                        beverage[i].setStocks(-1);          // 해당 음료 재고 1개 감소
                         return true;
                     }
-                    // 재고는 있으나 금액이 모자란 경우
-                    else{
-                        System.out.println(" 재고는 있으나 금액이 모자란 경우");
-                        return false;
-                    }
+                    
+                    // 재고는 있으나 음료를 살 돈이 부족한 경우
+                    else return false;
+
                 }
             }
         }
@@ -120,5 +118,8 @@ public class VendingMachine {
         checkBill=0;
         return changes;
     }
+
+    public void setInput(){this.input = Integer.valueOf(0);}    // 동적 할당
+    public void freeInput(){this.input=null;}                     // 동적할당 해제
 
 }
