@@ -1,13 +1,18 @@
 package GUI;
 import VendingMachine.Manager;
 import VendingMachine.VendingMachine;
+import GUI.StartMachine;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.util.regex.*;
 import java.awt.*;
 
-public class ManagerView extends StartMachine {
+
+
+public class ManagerView extends JFrame{
     private Main main;
     private JTabbedPane tabs;   // 화면 분리
     
@@ -40,22 +45,27 @@ public class ManagerView extends StartMachine {
     // 메뉴 선택 Panel
     public JTabbedPane menuPanel() {
         tabs= new JTabbedPane();
-        tabs.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
 
-        tabs.add("매출조회",SalesView());
-        tabs.add("재고조회",StocksView());
+        tabs.add("매출 조회",SalesView());
+        tabs.add("재고 조회",StocksView());
+        tabs.add("잔돈 확인",MoneyView());
         tabs.add("비밀번호 변경",PasswordView());
+        tabs.add("로그아웃",new JPanel());
 
-        JPanel emptyPanel = new JPanel();
-        tabs.setTabComponentAt(tabs.getTabCount() - 1, emptyPanel);
+        // 로그아웃 선택할 경우 자판기 화면으로 되돌아감
+        tabs.addChangeListener(e -> {
+            int selectedIndex = tabs.getSelectedIndex();
 
-//        menuPanel=new JPanel();
-//        menuPanel.setBorder(new EmptyBorder(5,5,5,5));
-//        menuPanel.setPreferredSize(new Dimension(100,50));
-//        menuPanel.setLayout(tabs);
-//         menuPanel.setLayout(new GridLayout(1,5));
-//        menuPanel.setBackground(Color.green);
-
+            if (selectedIndex == tabs.indexOfTab("로그아웃")) {
+                int option = JOptionPane.showConfirmDialog(null, "로그아웃 하시겠습니까?", "로그아웃", JOptionPane.YES_NO_OPTION);
+                if (option == JOptionPane.YES_OPTION) {
+                    JFrame managerView=this;
+                    managerView.dispose();
+                } else {
+                    tabs.setSelectedIndex(tabs.indexOfTab("매출 조회"));
+                }
+            }
+        });
         return tabs;
     }
 
@@ -69,7 +79,23 @@ public class ManagerView extends StartMachine {
     // 음료 재고 확인 및 보충, 가격 조정 Panel
     public JPanel StocksView(){
         Stocks = new JPanel();
-        Stocks.add(new JLabel("재고조회~~"));
+        Object[][] data = new Object[5][];
+        for(int i=0;i<data.length;i++){
+            data[i] = new Object[2];
+            data[i][0] = StartMachine.vm.getBeverageName(i);
+            data[i][1] = StartMachine.vm.getBeverageStocks(i);
+        }
+
+        // 열 제목 생성
+        String[] columnNames = {"음료 이름", "현재 재고"};
+
+        // JTable 생성
+        JTable table = new JTable(data, columnNames);
+
+        // 스크롤 가능한 테이블 패널 생성
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        Stocks.add(scrollPane);
         return Stocks;
     }
 
@@ -86,9 +112,8 @@ public class ManagerView extends StartMachine {
         return resetPW;
     }
 
-    // 로그아웃 Panel
-    public void Logout(){
-
+    // 관리자 메뉴 이동시 화면 변화
+    public void changeView(Main main){
+        this.main = main;
     }
-
 }

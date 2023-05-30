@@ -24,7 +24,7 @@ public class StartMachine extends JFrame{
     private JPanel managePanel;     // 관리자 메뉴
     private JPanel start;           // 자판기 화면
     
-    private VendingMachine vm;      // 음료 속성을 가져오기 위한 변수
+    protected static VendingMachine vm;     // 음료 속성을 가져오기 위한 변수
     private JLabel cMoney;          // 현재 사용자가 투입 & 사용 금액
     private JButton[] beverage;
 
@@ -55,7 +55,7 @@ public class StartMachine extends JFrame{
         c.add(start, BorderLayout.CENTER);
         c.add(managePanel,BorderLayout.SOUTH);
         setLocation(50,0);
-        setSize(1000,800);
+        setSize(700,800);
         setVisible(true);
     }
 
@@ -128,14 +128,16 @@ public class StartMachine extends JFrame{
                     if(vm.currentInput() >= vm.getBeveragePrice(bIdx)) {
 
                         // 재고 불충분
-                        if(!vm.buyBeverage(name)){
+                        if(vm.getBeverageStocks(bIdx)<=0){
                             JOptionPane.showMessageDialog(null,
                                     "선택한 음료의 재고가 없습니다.\n관리자에게 문의하세요.",
                                     "구매 불가",
                                     JOptionPane.INFORMATION_MESSAGE);
                             return;
                         }
+                        // 재고가 충분한 경우
                         else{
+                            vm.buyBeverage(bIdx);
                             cMoney.setText(Integer.toString(vm.currentInput()) + "원");
                         }
                     }
@@ -269,15 +271,16 @@ public class StartMachine extends JFrame{
 
         toManage.addActionListener(e -> {
                 String pw = JOptionPane.showInputDialog("비밀번호 입력:");
-                if(pw.equals(manager.getPassword())){
+            if(pw!=null) {
+                if (pw.equals(manager.getPassword())) {
                     new ManagerView().changeView(main);
-                }
-                else{
+                } else {
                     JOptionPane.showMessageDialog(null,
                             "비밀번호가 일치하지 않습니다.",
                             "관리자 인증 불가",
-                            JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.ERROR_MESSAGE);
                 }
+            }
         });
         return manage;
     }

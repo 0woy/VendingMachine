@@ -24,9 +24,11 @@ public class VendingMachine {
         };
     }
 
-    // 자판기 음료 이름 & 가격 받아오기
+    // 자판기 음료 속성 받아오기
     public String getBeverageName(int idx){return beverage[idx].getName();}
     public int getBeveragePrice(int idx){return beverage[idx].getPrice();}
+    public int getBeverageStocks(int idx){return beverage[idx].getStock();}
+    public int getBeverageSales(int idx){return beverage[idx].getSales();}
 
     // 화폐 투입 기능(잔돈 통은 사용자가 넣은 화폐만큼 추가됨)
     public int insertMoney(int won){
@@ -73,30 +75,13 @@ public class VendingMachine {
     public int currentStock(int idx){return beverage[idx].getStock();}
 
     // 음료 구입 기능
-    public boolean buyBeverage(String name){
-        for(int i =0;i<beverage.length;i++){
-            if(beverage[i].getName().equals(name) ){
-                // 음료 재고가 없는 경우
-                if(beverage[i].getStock()<=0)   return false;
+    public void buyBeverage(int i){
 
-                // 재고가 있는 경우
-                else {
-                    // 투입한 금액이 음료를 사기에 충분한 경우
-                    if(input >= beverage[i].getPrice()) {
-                        input -= beverage[i].getPrice();    // 음료 가격만큼 사용 금액 감소
-                        Sales += beverage[i].getPrice();    // 음료 가격만큼 판매액 증가
-                        beverage[i].setSellCount();         // 해당 음료 팔린 개수 증가
-                        beverage[i].setStocks(-1);          // 해당 음료 재고 1개 감소
-                        return true;
-                    }
-                    
-                    // 재고는 있으나 음료를 살 돈이 부족한 경우
-                    else return false;
+        input -= beverage[i].getPrice();    // 음료 가격만큼 사용 금액 감소
+        Sales += beverage[i].getPrice();    // 음료 가격만큼 판매액 증가
+        beverage[i].setSellCount();         // 해당 음료 팔린 개수 증가
+        beverage[i].setStocks(-1);          // 해당 음료 재고 1개 감소
 
-                }
-            }
-        }
-        return false;
     }
 
     // 화폐 단위 반환

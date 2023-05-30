@@ -6,11 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="20bedd70-200a-4112-8727-0ec4952a6734" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GUI/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GUI/ManagerView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/ManagerView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GUI/StartMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/StartMachine.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/VendingMachine/Beverage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VendingMachine/Beverage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/VendingMachine/Manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VendingMachine/Manager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/VendingMachine/VendingMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VendingMachine/VendingMachine.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -97,10 +95,22 @@
       <workItem from="1685182695974" duration="42440000" />
       <workItem from="1685426714863" duration="3053000" />
       <workItem from="1685433374831" duration="5710000" />
+      <workItem from="1685443935202" duration="5003000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/VendingMachine/Beverage.java</url>
+          <line>24</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -22,7 +22,7 @@ public class Beverage {
     public int getSales(){return sellCount*price;}      // 음료 팔린 금액 반환
 
     public void setPrice(int price){ this.price =price;}    // 음료의 가격을 price로 변환
-    public void setStocks(int plus){this.stocks+=plus;}     // 음료의 재고를 plus 만큼 추가
+    public void setStocks(int plus){this.stocks = (plus < 0) ? this.stocks-1 : this.stocks+1;}     // 음료의 재고를 plus 만큼 추가
     public void setName(String name){this.name=name;}       // 음료의 이름을 name으로 변환
     public void setSellCount(){this.sellCount+=1;}          // 음료가 팔릴 때마다 판매 개수 증가
 
