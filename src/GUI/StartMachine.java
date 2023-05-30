@@ -1,6 +1,8 @@
 package GUI;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.jar.JarEntry;
@@ -9,8 +11,12 @@ import javax.swing.border.Border;
 
 import VendingMachine.VendingMachine;
 import com.sun.tools.jconsole.JConsoleContext;
+import VendingMachine.Manager;
 
 public class StartMachine extends JFrame{
+
+    private Main main;
+    static Manager manager;
 
     private JPanel beveragePanel;   // 음료 구매 화면
     private JPanel userPanel;       // 잔돈 반환 & 화폐 투입
@@ -43,7 +49,6 @@ public class StartMachine extends JFrame{
         start.add(beveragePanel, BorderLayout.NORTH);
         start.add(userPanel, BorderLayout.CENTER);
         start.add(outPanel, BorderLayout.SOUTH);
-      //  start.add(outPanel,BorderLayout.WEST);
 
         c.add(start, BorderLayout.CENTER);
         c.add(managePanel,BorderLayout.SOUTH);
@@ -54,13 +59,10 @@ public class StartMachine extends JFrame{
 
     public JPanel BeveragePanel(){
         JPanel beverage = new JPanel();
-      //  beverage.setLayout(new GridLayout(2,3));
-        beverage.setBackground(Color.BLUE);
+        beverage.setBackground(Color.lightGray);
 
         Border border = BorderFactory.createLineBorder(Color.blue,5);
         beverage.setBorder(border);
-        //beverage.add(selectBeverage(3));
-        //beverage.add(selectBeverage(2));
         beverage.add(selectBeverage());
         return beverage;
     }
@@ -89,15 +91,17 @@ public class StartMachine extends JFrame{
 
     public JPanel selectBeverage(){
         JPanel select = new JPanel();
-        select.setLayout(new GridLayout(2,3));
+        GridLayout grid = new GridLayout(2,3);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        select.setLayout(grid);
         select.setBackground(Color.lightGray);
         beverage = new JButton[5];    // 이미지 버튼
         ImageIcon [] images = new ImageIcon[5]; // 음료 이미지
 
         select.setSize(150,30);
-      //  select.setLayout(new FlowLayout(FlowLayout.CENTER, 50,20));
 
-            for (int i=0; i < beverage.length; i++) {
+        for (int i=0; i < beverage.length; i++) {
                     int bIdx;
                     String name;
                     String path="";
@@ -140,8 +144,9 @@ public class StartMachine extends JFrame{
                     }
                     changeImage();
                 });
-                    select.add(beverage[i]);
+                select.add(beverage[i]);
             }
+
         return select;
     }
 
@@ -198,6 +203,7 @@ public class StartMachine extends JFrame{
                             "반환된 금액",
                             JOptionPane.INFORMATION_MESSAGE);
                     cMoney.setText("0원");   // 잔돈 반환 후 사용 가능 금액 초기화
+                    changeImage();
                 });
 
         user.add(returnChange);
@@ -253,6 +259,18 @@ public class StartMachine extends JFrame{
         manage.setBorder(border);
 
         manage.add(toManage,BorderLayout.EAST);
+
+        manage.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e){
+                super.mousePressed(e);
+                String pw = JOptionPane.showInputDialog("비밀번호 입력:");
+                if(pw.equals(manage.getName())){
+                    new ManagerView().setMain(main);
+                }
+            }
+        });
         return manage;
     }
 
@@ -268,6 +286,10 @@ public class StartMachine extends JFrame{
         out.add(outLet);
 
         return out;
+    }
+
+    public void setMain(Main main){
+        this.main = main;
     }
 
 }

@@ -3,6 +3,11 @@ import VendingMachine.VendingMachine;
 
 
 public class Manager extends VendingMachine {
+    private String password;
+
+    public Manager(){
+        this.password ="admin@123"; // 초기 비밀번호
+    }
 
     // 음료 일/월매출
     public int getSales(String name, String period)
@@ -15,6 +20,8 @@ public class Manager extends VendingMachine {
      if(period.equals("day")) return super.Sales;
      else return super.totalSales;
     }
+
+    public String getPassword(){return password;}
 
 
 

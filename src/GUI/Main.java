@@ -1,23 +1,26 @@
 package GUI;
 
 import javax.swing.*;
-import GUI.StartMachine;
+
+import java.awt.*;
 
 public class Main extends JFrame {
-
-    public Main() {
-
-    }
+    static ManagerView managerPage;
+    static StartMachine startPage;
 
     public static void main(String[] args) {
-        new StartMachine();
-        System.out.println("hellod");
-//        SwingUtilities.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                Main vendingMachine = new Main();
-//                vendingMachine.setVisible(true);
-//            }
-//        });
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Main main = new Main();
+                    startPage = new StartMachine();
+                    startPage.setMain(main);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 }
