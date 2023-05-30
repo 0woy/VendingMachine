@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
 import java.util.regex.*;
 import java.awt.*;
 
@@ -33,7 +34,7 @@ public class ManagerView extends JFrame{
         manager=new JPanel();
         manager.setLayout(new BorderLayout());
 
-        manager.add( menuPanel(),BorderLayout.CENTER);
+        manager.add(menuPanel(), BorderLayout.CENTER);
         setContentPane(manager);
 
         setLocation(600,100);
@@ -77,26 +78,70 @@ public class ManagerView extends JFrame{
     }
 
     // 음료 재고 확인 및 보충, 가격 조정 Panel
-    public JPanel StocksView(){
-        Stocks = new JPanel();
+    public JPanel StocksView() {
+        Stocks = new JPanel(new BorderLayout(10,20));
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(Color.CYAN);
+        JPanel buttonPanel = new JPanel();
+
         Object[][] data = new Object[5][];
-        for(int i=0;i<data.length;i++){
+        for (int i = 0; i < data.length; i++) {
             data[i] = new Object[2];
             data[i][0] = StartMachine.vm.getBeverageName(i);
             data[i][1] = StartMachine.vm.getBeverageStocks(i);
         }
 
-        // 열 제목 생성
+        // Column names
         String[] columnNames = {"음료 이름", "현재 재고"};
 
-        // JTable 생성
-        JTable table = new JTable(data, columnNames);
+        // Read-only table model
+        DefaultTableModel tableModel = new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
-        // 스크롤 가능한 테이블 패널 생성
+        JTable table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
 
-        Stocks.add(scrollPane);
-        return Stocks;
+        JLabel title = new JLabel("음료 재고 현황");
+
+        JButton Supplement = new JButton("재고 보충");
+        JButton Modify= new JButton("음료 & 가격 변경");
+
+        titlePanel.add(title);
+        buttonPanel.add(Supplement);
+        buttonPanel.add(Modify);
+
+        Stocks.add(titlePanel, BorderLayout.NORTH);
+        Stocks.add(scrollPane, BorderLayout.CENTER);
+        Stocks.add(buttonPanel, BorderLayout.SOUTH);
+        // Supply panel
+        JPanel supply = new JPanel();
+        JButton tmp = new JButton("우힣");
+        supply.add(tmp);
+
+        // CardLayout to switch between Stocks and supply panels
+        CardLayout cardLayout = new CardLayout();
+        JPanel cards = new JPanel(cardLayout);
+        cards.add(Stocks, "Stocks");
+        cards.add(supply, "Supply");
+
+        Supplement.addActionListener(e -> {
+            cardLayout.show(cards, "Supply");
+        });
+        tmp.addActionListener(e -> {
+            cardLayout.show(cards,"Stocks");
+        });
+
+
+
+        // Create a wrapper panel to hold the cards panel
+        JPanel wrapperPanel = new JPanel(new BorderLayout());
+        wrapperPanel.add(cards, BorderLayout.CENTER);
+
+        return wrapperPanel;
     }
 
     // 잔돈 확인 & 충전, 수금 Panel
