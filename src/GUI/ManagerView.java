@@ -4,10 +4,16 @@ import VendingMachine.VendingMachine;
 import GUI.StartMachine;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.regex.*;
 import java.awt.*;
 
@@ -15,17 +21,19 @@ import java.awt.*;
 
 public class ManagerView extends JFrame{
     private Main main;
-    private JTabbedPane tabs;   // 화면 분리
-    
-    private JPanel Input_pw;    // 관리자 인증 화면
-    private JPanel Sales;       // 매출 현황 화면
-    private JPanel Stocks;      // 재고 파악, 음료 수정 화면
-    private JPanel Money;       // 잔돈 & 수금 화면
-    private JPanel resetPW;     // 비밀번호 변경 화면
+    private JTabbedPane tabs;       // 화면 분리
+    private CardLayout cardLayout;
+    private JPanel cards;
 
-    private JPanel manager;       // 관리자 화면
-    private JPanel viewMenuPanel;   // 선택한 메뉴에 따라 화면 보이기
-    private JPanel menuPanel;       // 확인할 메뉴 선택
+    private JPanel Input_pw;        // 관리자 인증 화면
+    private JPanel Sales;           // 매출 현황 화면
+    private JPanel Stocks;          // 재고 파악, 음료 수정 화면
+    private JPanel supplyStocks;    // 재고 보충 화면
+    private JPanel modifyBeverage;  // 음료 속성 변경 화면
+    private JPanel Money;           // 잔돈 & 수금 화면
+    private JPanel resetPW;         // 비밀번호 변경 화면
+
+    private JPanel manager;         // 관리자 화면
 
     public ManagerView() {
         setTitle("관리자 메뉴");
@@ -33,8 +41,9 @@ public class ManagerView extends JFrame{
 
         manager=new JPanel();
         manager.setLayout(new BorderLayout());
-
         manager.add(menuPanel(), BorderLayout.CENTER);
+        Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+        manager.setBorder(border);
         setContentPane(manager);
 
         setLocation(600,100);
@@ -77,7 +86,7 @@ public class ManagerView extends JFrame{
         return Sales;
     }
 
-    // 음료 재고 확인 및 보충, 가격 조정 Panel
+    // 음료 재고 확인 Panel
     public JPanel StocksView() {
         Stocks = new JPanel(new BorderLayout(10,20));
         JPanel titlePanel = new JPanel();
@@ -90,11 +99,10 @@ public class ManagerView extends JFrame{
             data[i][0] = StartMachine.vm.getBeverageName(i);
             data[i][1] = StartMachine.vm.getBeverageStocks(i);
         }
-
-        // Column names
+        
         String[] columnNames = {"음료 이름", "현재 재고"};
 
-        // Read-only table model
+        // Table을 Read-Only로 설정
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -103,10 +111,9 @@ public class ManagerView extends JFrame{
         };
 
         JTable table = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(table);
+        JScrollPane scrollPane = new JScrollPane(table);    // 스크롤 가능
 
         JLabel title = new JLabel("음료 재고 현황");
-
         JButton Supplement = new JButton("재고 보충");
         JButton Modify= new JButton("음료 & 가격 변경");
 
@@ -117,33 +124,228 @@ public class ManagerView extends JFrame{
         Stocks.add(titlePanel, BorderLayout.NORTH);
         Stocks.add(scrollPane, BorderLayout.CENTER);
         Stocks.add(buttonPanel, BorderLayout.SOUTH);
-        // Supply panel
-        JPanel supply = new JPanel();
-        JButton tmp = new JButton("우힣");
-        supply.add(tmp);
+        
+        // 재고 보충 패널
+        supplyStocks = SupplyStocksView(tableModel);
+        modifyBeverage = ModifyBeverage(tableModel);
 
-        // CardLayout to switch between Stocks and supply panels
-        CardLayout cardLayout = new CardLayout();
-        JPanel cards = new JPanel(cardLayout);
+
+        // CardLayout 재고 확인 & 보충 화면 구성
+        cardLayout = new CardLayout();
+        cards = new JPanel(cardLayout);
         cards.add(Stocks, "Stocks");
-        cards.add(supply, "Supply");
+        cards.add(supplyStocks, "Supply");
+        cards.add(modifyBeverage, "Modify");
 
         Supplement.addActionListener(e -> {
             cardLayout.show(cards, "Supply");
         });
-        tmp.addActionListener(e -> {
+
+        Modify.addActionListener(e -> {
+            cardLayout.show(cards,"Modify");
+        });
+
+        return cards;
+    }
+
+    // 재고 보충 화면
+    public JPanel SupplyStocksView(DefaultTableModel tableModel){
+        supplyStocks = new JPanel();
+        GridLayout grid = new GridLayout(6,2);
+        grid.setHgap(30);
+        grid.setVgap(50);
+        supplyStocks.setLayout(grid);
+
+        Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+        supplyStocks.setBorder(border);
+
+        JLabel [] name = new JLabel[5];
+        JFormattedTextField [] add = new JFormattedTextField[5];
+
+        for(int i=0;i<add.length;i++){
+            name[i] = new JLabel(StartMachine.vm.getBeverageName(i));
+            name[i].setHorizontalAlignment(SwingConstants.CENTER); // Set label alignment to center
+
+
+            NumberFormat format = NumberFormat.getInstance();
+            format.setParseIntegerOnly(true);
+
+            add[i] = new JFormattedTextField(format);
+            add[i].setValue(0); // 초기값 0으로 설정
+
+            add[i].setHorizontalAlignment(SwingConstants.CENTER); // Set label alignment to center
+
+            int finalI = i;
+            //입력 종료 후 사용자의 입력값 검증 (예외 처리)
+            add[i].addFocusListener(new java.awt.event.FocusAdapter() {
+                @Override
+                // 사용자가 TextField 선택한 경우 0 사라짐
+                public void focusGained(FocusEvent e) {
+                    JFormattedTextField textField = (JFormattedTextField) e.getSource();
+                   textField.setText("");
+                }
+            });
+
+            add[i].addKeyListener(new KeyListener() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    // 숫자 BackSpace, Delete키만 입력 허용
+                    char c = e.getKeyChar();
+                    if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
+                        e.consume();
+                    }
+
+                    // 재고 보충은 10개를 초과할 수는 없음
+                    else if (Character.isDigit(c)) {
+                        JFormattedTextField textField = (JFormattedTextField) e.getSource();
+                        String currentText = textField.getText();
+                        int caretPosition = textField.getCaretPosition();
+                        String newText = currentText.substring(0, caretPosition) + c + currentText.substring(caretPosition);
+                        int value = Integer.parseInt(newText);
+                        if (value > 10) {
+                            JOptionPane.showMessageDialog(null,
+                                    "10개를 초과하여 재고를 충전할 수 없습니다.",
+                                    "재고 충전 불가",
+                                    JOptionPane.ERROR_MESSAGE);
+                            e.consume();
+                        }
+                    }
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {}
+                @Override
+                public void keyReleased(KeyEvent e) {}
+            });
+            supplyStocks.add(name[i]);
+            supplyStocks.add(add[i]);
+        }
+
+        JButton [] buttons = new JButton[2];
+        buttons[0] = new JButton("취소");
+        buttons[1] = new JButton("확인");
+
+        buttons[0].addActionListener(e -> {
+            cardLayout.show(cards,"Stocks");
+            for(int i=0;i<add.length;i++)
+                add[i].setValue(0);     // 추후 입력을 위해 다시 0으로 초기화
+        });
+
+        buttons[1].addActionListener(e -> {
+            for(int i=0;i<add.length;i++) {
+                Number value = (Number) add[i].getValue();
+                int plus = value.intValue();
+                int current = StartMachine.vm.currentStock(i);
+                StartMachine.vm.setBeverageStocks(i, plus);
+                
+                // 재고 조회 테이블 업데이트
+                tableModel.setValueAt(current+plus, i, 1);
+                add[i].setValue(0);     // 추후 입력을 위해 다시 0으로 초기화
+            }
+
             cardLayout.show(cards,"Stocks");
         });
 
+        supplyStocks.add(buttons[0]);
+        supplyStocks.add(buttons[1]);
 
-
-        // Create a wrapper panel to hold the cards panel
-        JPanel wrapperPanel = new JPanel(new BorderLayout());
-        wrapperPanel.add(cards, BorderLayout.CENTER);
-
-        return wrapperPanel;
+        return supplyStocks;
     }
 
+    public JPanel ModifyBeverage(DefaultTableModel tableModel){
+        modifyBeverage = new JPanel();
+        GridLayout grid = new GridLayout(4,2);
+        grid.setHgap(30);
+        grid.setVgap(70);
+        modifyBeverage.setLayout(grid);
+
+        Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+        modifyBeverage.setBorder(border);
+
+        JLabel [] name = new JLabel[3];         // Labels
+        JTextField [] add = new JTextField[2];  // 음료 이름 변경
+        JFormattedTextField price;              // 음료 가격 변경
+
+        NumberFormat format = NumberFormat.getInstance();
+        format.setParseIntegerOnly(true);
+        price = new JFormattedTextField(format);
+
+
+        name[0] = new JLabel("변경할 음료 이름");
+        name[1] = new JLabel("추가할 음료 이름");
+        name[2] = new JLabel("변경할 음료 가격");
+
+        for(int i=0;i<add.length;i++){
+            add[i] = new JTextField();
+            add[i].setText("");
+
+            name[i].setHorizontalAlignment(SwingConstants.CENTER);
+            add[i].setHorizontalAlignment(SwingConstants.CENTER);
+
+            int finalI = i;
+            //입력 종료 후 사용자의 입력값 검증 (예외 처리)
+            add[i].addFocusListener(new java.awt.event.FocusAdapter() {
+                @Override
+                // 사용자가 TextField 선택한 경우 0 사라짐
+                public void focusGained(FocusEvent e) {
+                    JTextField textField = (JTextField) e.getSource();
+                    textField.setText("");
+                }
+            });
+
+
+
+            add[i].addKeyListener(new KeyListener() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    // 숫자 BackSpace, Delete키만 입력 허용
+                    char c = e.getKeyChar();
+                    if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
+                        e.consume();
+                    }
+
+                    // 재고 보충은 10개를 초과할 수는 없음
+                    else if (Character.isDigit(c)) {
+                        JFormattedTextField textField = (JFormattedTextField) e.getSource();
+                        String currentText = textField.getText();
+                        int caretPosition = textField.getCaretPosition();
+                        String newText = currentText.substring(0, caretPosition) + c + currentText.substring(caretPosition);
+                        int value = Integer.parseInt(newText);
+                        if (value > 10) {
+                            JOptionPane.showMessageDialog(null,
+                                    "10개를 초과하여 재고를 충전할 수 없습니다.",
+                                    "재고 충전 불가",
+                                    JOptionPane.ERROR_MESSAGE);
+                            e.consume();
+                        }
+                    }
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {}
+                @Override
+                public void keyReleased(KeyEvent e) {}
+            });
+            modifyBeverage.add(name[i]);
+            modifyBeverage.add(add[i]);
+        }
+
+        //price.setValue(add[0].getText());
+
+        JButton [] buttons = new JButton[2];
+        buttons[0] = new JButton("취소");
+        buttons[1] = new JButton("확인");
+
+        buttons[0].addActionListener(e -> {
+            cardLayout.show(cards,"Stocks");
+            for(int i=0;i<add.length;i++)
+                add[i].setText("");     // 추후 입력을 위해 다시 0으로 초기화
+        });
+
+        modifyBeverage.add(buttons[0]);
+        modifyBeverage.add(buttons[1]);
+        return modifyBeverage;
+    }
     // 잔돈 확인 & 충전, 수금 Panel
     public JPanel MoneyView(){
         Money = new JPanel();

@@ -25,7 +25,7 @@ public class StartMachine extends JFrame{
     private JPanel start;           // 자판기 화면
     
     protected static VendingMachine vm;     // 음료 속성을 가져오기 위한 변수
-    private JLabel cMoney;          // 현재 사용자가 투입 & 사용 금액
+    private JLabel cMoney;                  // 현재 사용자가 투입 & 사용 금액
     private JButton[] beverage;
 
     public StartMachine(){

@@ -30,6 +30,11 @@ public class VendingMachine {
     public int getBeverageStocks(int idx){return beverage[idx].getStock();}
     public int getBeverageSales(int idx){return beverage[idx].getSales();}
 
+    public void setBeverageName(int idx, String name){beverage[idx].setName(name);}
+    public void setBeveragePrice(int idx,int price){beverage[idx].setPrice(price);}
+    public void setBeverageStocks(int idx,int stocks){beverage[idx].setStocks(stocks);}
+
+
     // 화폐 투입 기능(잔돈 통은 사용자가 넣은 화폐만큼 추가됨)
     public int insertMoney(int won){
 
