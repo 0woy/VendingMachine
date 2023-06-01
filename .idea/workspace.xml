@@ -7,7 +7,6 @@
     <list default="true" id="20bedd70-200a-4112-8727-0ec4952a6734" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GUI/ManagerView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/ManagerView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/VendingMachine/VendingMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VendingMachine/VendingMachine.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,7 +94,8 @@
       <workItem from="1685433374831" duration="5710000" />
       <workItem from="1685443935202" duration="7902000" />
       <workItem from="1685465961487" duration="8261000" />
-      <workItem from="1685597806367" duration="3994000" />
+      <workItem from="1685597806367" duration="4075000" />
+      <workItem from="1685632508823" duration="4580000" />
     </task>
     <servers />
   </component>
@@ -107,13 +107,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/GUI/ManagerView.java</url>
-          <line>241</line>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/GUI/ManagerView.java</url>
-          <line>287</line>
-          <option name="timeStamp" value="10" />
+          <line>396</line>
+          <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -9,9 +9,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.regex.*;
@@ -167,7 +165,7 @@ public class ManagerView extends JFrame{
         // 음료 이름 저장 및 가운데 정렬
         for(int i=0;i<add.length;i++){
             name[i] = new JLabel(StartMachine.vm.getBeverageName(i));
-            name[i].setHorizontalAlignment(SwingConstants.CENTER); // Set label alignment to center
+            name[i].setHorizontalAlignment(SwingConstants.CENTER);
             
             // 숫자만 받아을 수 있도록 format 설정
             NumberFormat format = NumberFormat.getInstance();
@@ -252,6 +250,7 @@ public class ManagerView extends JFrame{
         supplyStocks.add(buttons[0]);
         supplyStocks.add(buttons[1]);
 
+
         return supplyStocks;
     }
 
@@ -267,7 +266,7 @@ public class ManagerView extends JFrame{
 
         JLabel [] name = new JLabel[3];                       // Labels
         JComboBox<String>changeBeverage = new JComboBox<>();  // 변경할 음료 선택
-        JTextField newBeverage = new JTextField("");          // 추가할 음료 선택
+        JTextField newBeverage = new JTextField();            // 추가할 음료 선택
         JFormattedTextField price;                            // 음료 가격 변경
         JButton [] buttons = new JButton[2];                  // 취소 & 확인 버튼
 
@@ -291,9 +290,9 @@ public class ManagerView extends JFrame{
             changeBeverage.addItem(StartMachine.vm.getBeverageName(i));
         }
 
+        // 사용자가 TextField 선택한 경우 초기값 사라짐
         price.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
-            // 사용자가 TextField 선택한 경우 0 사라짐
             public void focusGained(FocusEvent e) {
                 JFormattedTextField textField = (JFormattedTextField) e.getSource();
                 textField.setText("");
@@ -331,24 +330,26 @@ public class ManagerView extends JFrame{
             @Override
             public void keyReleased(KeyEvent e) {}
         });
-
-
-
+        
+        // 음료 이름 선택 패널(Combobox로 구성하여 오탈자가 없도록 함)
         JPanel changeBeveragePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         changeBeverage.setPreferredSize(new Dimension(150, 30));
         changeBeveragePanel.add(name[0]);
         changeBeveragePanel.add(changeBeverage);
 
+        // 음료 이름 변경 패널 (TextField로 구성하여 음료 이름 변경)
         JPanel newBeveragePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         newBeverage.setPreferredSize(new Dimension(150, 30));
         newBeveragePanel.add(name[1]);
         newBeveragePanel.add(newBeverage);
 
+        // 음료 가격 변경 패널 (양수만 입력 가능하도록 함)
         JPanel pricePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         price.setPreferredSize(new Dimension(150, 30));
         pricePanel.add(name[2]);
         pricePanel.add(price);
 
+        // 확인 및 취소 버튼
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.setPreferredSize(new Dimension(150, 30));
         buttonPanel.add(buttons[0]);
@@ -359,28 +360,66 @@ public class ManagerView extends JFrame{
         modifyBeverage.add(pricePanel);
         modifyBeverage.add(buttonPanel);
 
+
+
+        // Combobox에서 음료를 선택한 경우
         changeBeverage.addActionListener(e->{
             String bName = (String)changeBeverage.getSelectedItem();
+            // 선택한 음료를 음료 이름 변경값지정
             newBeverage.setText(bName);
+            // 선택한 음료의 가격을 음료 가격 변경값으로 지정
             price.setValue(StartMachine.vm.getBeveragePrice(changeBeverage.getSelectedIndex()));
         });
 
         // 취소 버튼 누를시
         buttons[0].addActionListener(e -> {
-            cardLayout.show(cards,"Stocks");
-            changeBeverage.setSelectedIndex(-1);  // 음료 선택창 초기화
-            newBeverage.setText("");     // 음료 선택창 초기화
+            cardLayout.show(cards,"Stocks"); // 음료 재고 조회 화면으로 이동
+            changeBeverage.setSelectedIndex(0);  // 음료 선택 값 초기화
+            newBeverage.setText(StartMachine.vm.getBeverageName(0));              // 음료 이름 변경 값 초기화
+            price.setValue(StartMachine.vm.getBeveragePrice(0));                    // 음료 가격 초기화
         });
 
         // 확인 버튼 누를시
         buttons[1].addActionListener(e -> {
-            // 음료 이름을 변경하지 않는 경우
-            if(newBeverage.equals((String)changeBeverage.getSelectedItem())){
 
+            // 현재 선택된 음료의 정보를 각각 저장
+            int currentPrice =  StartMachine.vm.getBeveragePrice(changeBeverage.getSelectedIndex());    // 가격
+            String currentName = StartMachine.vm.getBeverageName(changeBeverage.getSelectedIndex());    // 이름
+            int currentIdx = changeBeverage.getSelectedIndex(); // 인덱스
+            // 취소 버튼의 ActionListener를 활용해 재고 조회 화면으로 이동할 수 있는 변수
+            ActionListener moveStockView = buttons[0].getActionListeners()[0];
+
+            // 아무런 입력 없이 확인을 누른 경우 음료 속성 변경 방지
+            newBeverage.setText(currentName);
+            price.setValue(currentPrice);
+
+            // 음료의 이름을 변경하지 않은 경우
+            if(newBeverage.getText().equals(currentName)){
+
+                // 음료의 가격이 변경된 경우
+                if((int)price.getValue() != currentPrice){
+                    StartMachine.vm.setBeveragePrice(currentIdx,(int)price.getValue()); // 선택된 음료의 가격을 price로 변경
+                }
             }
+            // 음료의 이름을 변경한 경우
+            else{
+                StartMachine.vm.setBeverageName(currentIdx, (String)newBeverage.getText()); // 선택된 음료의 이름을 newBeverage로 변경
+                changeBeverage.setSelectedItem(newBeverage.getText());
+
+                // 음료의 가격이 변경된 경우
+                if((Integer) price.getValue() != currentPrice){
+                    StartMachine.vm.setBeveragePrice(currentIdx,(int)price.getValue()); // 선택된 음료의 가격을 price로 변경
+                }
+            }
+            // 재고 조회 테이블 업데이트
+            tableModel.setValueAt(StartMachine.vm.getBeverageName(currentIdx), currentIdx, 0);
+            //재고 조회 화면으로 이동
+            moveStockView.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+
         });
 
-
+        for(int i=0;i<5;i++)
+            System.out.println("음료 이름:"+StartMachine.vm.getBeverageName(i)+" 음료 가격:"+StartMachine.vm.getBeveragePrice(i));
         return modifyBeverage;
     }
 
