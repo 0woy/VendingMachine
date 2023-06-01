@@ -109,6 +109,11 @@ public class VendingMachine {
         return changes;
     }
 
+    // 자판기에 존재하는 음료 개수 반환
+    public int getBeverageCount(){
+        return beverage.length;
+    }
+
     public void setInput(){this.input = Integer.valueOf(0);}    // 동적 할당
     public void freeInput(){this.input=null;}                     // 동적할당 해제
 

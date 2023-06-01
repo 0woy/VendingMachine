@@ -160,20 +160,23 @@ public class ManagerView extends JFrame{
         supplyStocks.setBorder(border);
 
         JLabel [] name = new JLabel[5];
+
+        // 숫자만 받기 위해 JFormatted 사용
         JFormattedTextField [] add = new JFormattedTextField[5];
 
+        // 음료 이름 저장 및 가운데 정렬
         for(int i=0;i<add.length;i++){
             name[i] = new JLabel(StartMachine.vm.getBeverageName(i));
             name[i].setHorizontalAlignment(SwingConstants.CENTER); // Set label alignment to center
-
-
+            
+            // 숫자만 받아을 수 있도록 format 설정
             NumberFormat format = NumberFormat.getInstance();
             format.setParseIntegerOnly(true);
 
+            // 초기값 0으로 설정 & 가운데 정렬
             add[i] = new JFormattedTextField(format);
-            add[i].setValue(0); // 초기값 0으로 설정
-
-            add[i].setHorizontalAlignment(SwingConstants.CENTER); // Set label alignment to center
+            add[i].setValue(0);
+            add[i].setHorizontalAlignment(SwingConstants.CENTER);
 
             int finalI = i;
             //입력 종료 후 사용자의 입력값 검증 (예외 처리)
@@ -252,100 +255,135 @@ public class ManagerView extends JFrame{
         return supplyStocks;
     }
 
+    // 음료 속성 변경화면
     public JPanel ModifyBeverage(DefaultTableModel tableModel){
         modifyBeverage = new JPanel();
-        GridLayout grid = new GridLayout(4,2);
-        grid.setHgap(30);
-        grid.setVgap(70);
+        GridLayout grid = new GridLayout(5,1,15,40);
+
         modifyBeverage.setLayout(grid);
 
-        Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+        Border border = BorderFactory.createEmptyBorder(20, 10, 10, 10);
         modifyBeverage.setBorder(border);
 
-        JLabel [] name = new JLabel[3];         // Labels
-        JTextField [] add = new JTextField[2];  // 음료 이름 변경
-        JFormattedTextField price;              // 음료 가격 변경
+        JLabel [] name = new JLabel[3];                       // Labels
+        JComboBox<String>changeBeverage = new JComboBox<>();  // 변경할 음료 선택
+        JTextField newBeverage = new JTextField("");          // 추가할 음료 선택
+        JFormattedTextField price;                            // 음료 가격 변경
+        JButton [] buttons = new JButton[2];                  // 취소 & 확인 버튼
 
+        // 숫자만 받아을 수 있도록 format 설정
         NumberFormat format = NumberFormat.getInstance();
         format.setParseIntegerOnly(true);
         price = new JFormattedTextField(format);
-
+        price.setValue(0);
 
         name[0] = new JLabel("변경할 음료 이름");
         name[1] = new JLabel("추가할 음료 이름");
         name[2] = new JLabel("변경할 음료 가격");
 
-        for(int i=0;i<add.length;i++){
-            add[i] = new JTextField();
-            add[i].setText("");
-
-            name[i].setHorizontalAlignment(SwingConstants.CENTER);
-            add[i].setHorizontalAlignment(SwingConstants.CENTER);
-
-            int finalI = i;
-            //입력 종료 후 사용자의 입력값 검증 (예외 처리)
-            add[i].addFocusListener(new java.awt.event.FocusAdapter() {
-                @Override
-                // 사용자가 TextField 선택한 경우 0 사라짐
-                public void focusGained(FocusEvent e) {
-                    JTextField textField = (JTextField) e.getSource();
-                    textField.setText("");
-                }
-            });
-
-
-
-            add[i].addKeyListener(new KeyListener() {
-                @Override
-                public void keyTyped(KeyEvent e) {
-                    // 숫자 BackSpace, Delete키만 입력 허용
-                    char c = e.getKeyChar();
-                    if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
-                        e.consume();
-                    }
-
-                    // 재고 보충은 10개를 초과할 수는 없음
-                    else if (Character.isDigit(c)) {
-                        JFormattedTextField textField = (JFormattedTextField) e.getSource();
-                        String currentText = textField.getText();
-                        int caretPosition = textField.getCaretPosition();
-                        String newText = currentText.substring(0, caretPosition) + c + currentText.substring(caretPosition);
-                        int value = Integer.parseInt(newText);
-                        if (value > 10) {
-                            JOptionPane.showMessageDialog(null,
-                                    "10개를 초과하여 재고를 충전할 수 없습니다.",
-                                    "재고 충전 불가",
-                                    JOptionPane.ERROR_MESSAGE);
-                            e.consume();
-                        }
-                    }
-                }
-
-                @Override
-                public void keyPressed(KeyEvent e) {}
-                @Override
-                public void keyReleased(KeyEvent e) {}
-            });
-            modifyBeverage.add(name[i]);
-            modifyBeverage.add(add[i]);
-        }
-
-        //price.setValue(add[0].getText());
-
-        JButton [] buttons = new JButton[2];
         buttons[0] = new JButton("취소");
         buttons[1] = new JButton("확인");
 
-        buttons[0].addActionListener(e -> {
-            cardLayout.show(cards,"Stocks");
-            for(int i=0;i<add.length;i++)
-                add[i].setText("");     // 추후 입력을 위해 다시 0으로 초기화
+        // Label 가운데 정렬 및 음료 선택 콤보박스 아이템 추가
+        for(int i=0;i<StartMachine.vm.getBeverageCount();i++){
+            if(i<=2)
+                name[i].setPreferredSize(new Dimension(150,30));
+            changeBeverage.addItem(StartMachine.vm.getBeverageName(i));
+        }
+
+        price.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            // 사용자가 TextField 선택한 경우 0 사라짐
+            public void focusGained(FocusEvent e) {
+                JFormattedTextField textField = (JFormattedTextField) e.getSource();
+                textField.setText("");
+            }
         });
 
-        modifyBeverage.add(buttons[0]);
-        modifyBeverage.add(buttons[1]);
+        price.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                // 숫자 BackSpace, Delete키만 입력 허용
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
+                    e.consume();
+                }
+
+                // 음료 가격은 5000원을 초과할 수는 없음
+                else if (Character.isDigit(c)) {
+                    JFormattedTextField textField = (JFormattedTextField) e.getSource();
+                    String currentText = textField.getText();
+                    int caretPosition = textField.getCaretPosition();
+                    String newText = currentText.substring(0, caretPosition) + c + currentText.substring(caretPosition);
+                    int value = Integer.parseInt(newText);
+                    if (value > 5000) {
+                        JOptionPane.showMessageDialog(null,
+                                "5000원을 초과한 금액으로 산정할 수 없습니다.",
+                                "가격 변경 불가",
+                                JOptionPane.ERROR_MESSAGE);
+                        e.consume();
+                    }
+                }
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {}
+            @Override
+            public void keyReleased(KeyEvent e) {}
+        });
+
+
+
+        JPanel changeBeveragePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        changeBeverage.setPreferredSize(new Dimension(150, 30));
+        changeBeveragePanel.add(name[0]);
+        changeBeveragePanel.add(changeBeverage);
+
+        JPanel newBeveragePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        newBeverage.setPreferredSize(new Dimension(150, 30));
+        newBeveragePanel.add(name[1]);
+        newBeveragePanel.add(newBeverage);
+
+        JPanel pricePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        price.setPreferredSize(new Dimension(150, 30));
+        pricePanel.add(name[2]);
+        pricePanel.add(price);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setPreferredSize(new Dimension(150, 30));
+        buttonPanel.add(buttons[0]);
+        buttonPanel.add(buttons[1]);
+
+        modifyBeverage.add(changeBeveragePanel);
+        modifyBeverage.add(newBeveragePanel);
+        modifyBeverage.add(pricePanel);
+        modifyBeverage.add(buttonPanel);
+
+        changeBeverage.addActionListener(e->{
+            String bName = (String)changeBeverage.getSelectedItem();
+            newBeverage.setText(bName);
+            price.setValue(StartMachine.vm.getBeveragePrice(changeBeverage.getSelectedIndex()));
+        });
+
+        // 취소 버튼 누를시
+        buttons[0].addActionListener(e -> {
+            cardLayout.show(cards,"Stocks");
+            changeBeverage.setSelectedIndex(-1);  // 음료 선택창 초기화
+            newBeverage.setText("");     // 음료 선택창 초기화
+        });
+
+        // 확인 버튼 누를시
+        buttons[1].addActionListener(e -> {
+            // 음료 이름을 변경하지 않는 경우
+            if(newBeverage.equals((String)changeBeverage.getSelectedItem())){
+
+            }
+        });
+
+
         return modifyBeverage;
     }
+
     // 잔돈 확인 & 충전, 수금 Panel
     public JPanel MoneyView(){
         Money = new JPanel();
