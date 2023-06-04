@@ -5,21 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="20bedd70-200a-4112-8727-0ec4952a6734" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Images/buy_고급커피.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Images/buy_물.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Images/buy_이온음료.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Images/buy_커피.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Images/buy_탄산음료.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Images/noImage.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GUI/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GUI/ManagerView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/ManagerView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GUI/StartMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/StartMachine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Images/고급커피.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/Images/고급커피.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Images/물.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/Images/물.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Images/이온음료.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/Images/이온음료.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Images/커피.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/Images/커피.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Images/탄산음료.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/Images/탄산음료.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/VendingMachine/Change.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VendingMachine/Change.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/VendingMachine/VendingMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VendingMachine/VendingMachine.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -114,23 +103,13 @@
       <workItem from="1685597806367" duration="4075000" />
       <workItem from="1685632508823" duration="4580000" />
       <workItem from="1685793811992" duration="14695000" />
-      <workItem from="1685882429193" duration="8676000" />
+      <workItem from="1685882429193" duration="8752000" />
+      <workItem from="1685895901464" duration="7103000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/GUI/ManagerView.java</url>
-          <line>434</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

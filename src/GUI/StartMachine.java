@@ -1,6 +1,7 @@
 package GUI;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import javax.swing.border.Border;
 
 import VendingMachine.VendingMachine;
@@ -10,7 +11,7 @@ public class StartMachine extends JFrame{
     
     private Main main;              // GUI.Main 클래스
     static Manager manager;         // 관리자 클래스
-    private static StartMachine startInstance;  //해당 클래스의 인스턴스
+    
     private JPanel beveragePanel;   // 음료 구매 화면
     private JPanel select;          // 음료 버튼 설정 화면
     private JPanel userPanel;       // 잔돈 반환 & 화폐 투입
@@ -23,7 +24,7 @@ public class StartMachine extends JFrame{
     
     protected static VendingMachine vm;     // 음료 속성을 가져오기 위한 변수
     private JLabel cMoney;                  // 현재 사용자가 투입 & 사용 금액
-    private JButton[] beverage;
+    private static JButton[] beverage;      // 자판기 음료 버튼
 
     public StartMachine(){
         manager = new Manager();
@@ -56,19 +57,6 @@ public class StartMachine extends JFrame{
         setVisible(true);
     }
 
-    public static StartMachine getInstance(){
-        if(startInstance ==null){
-            startInstance =new StartMachine();
-        }
-        return startInstance;
-    }
-
-    public void repaintPanel() {
-        start.remove(beveragePanel);
-        beveragePanel = selectBeverage();
-       // start.add(beveragePanel, BorderLayout.NORTH);
-    }
-
     // 음료 Panel
     public JPanel BeveragePanel(){
         JPanel beverage = new JPanel();
@@ -82,26 +70,65 @@ public class StartMachine extends JFrame{
     }
 
     // 음료 재고 상태 & 사용자 투입 금액에 따른 음료 이미지 변환
-    public void changeImage(){
+    public static void changeImage(){
         for(int i=0;i<beverage.length;i++){
             if(vm.currentInput() < vm.getBeveragePrice(i) && vm.currentStock(i)>0){
                 String newPath = "src/Images/no_"+vm.getBeverageName(i)+".png";  // Provide the path of the updated image
-                ImageIcon newImage = new ImageIcon(newPath);
-                beverage[i].setIcon(newImage);  // Set the new image for the button
+                File imageFile = new File(newPath);
+                
+                // 음료 이미지 파일이 존재하는 경우
+                if(imageFile.exists()) {
+                    ImageIcon newImage = new ImageIcon(newPath);
+                    beverage[i].setIcon(newImage);  // Set the new image for the button}
+                }
+
+                // 음료 이미지가 없는 경우
+                else{
+                    ImageIcon NoImage = new ImageIcon("src/Images/noImage.png");
+                    beverage[i].setIcon(NoImage);
+                }
             }
+
             else if(vm.currentStock(i) <=0){
                 String newPath = "src/Images/soldout_"+vm.getBeverageName(i)+".png";  // Provide the path of the updated image
-                ImageIcon newImage = new ImageIcon(newPath);
-                beverage[i].setIcon(newImage);  // Set the new image for the button
+                File imageFile = new File(newPath);
+
+                // 음료 이미지 파일이 존재하는 경우
+                if(imageFile.exists()) {
+                    ImageIcon newImage = new ImageIcon(newPath);
+                    beverage[i].setIcon(newImage);  // Set the new image for the button}
+                }
+
+                // 음료 이미지가 없는 경우
+                else{
+                    ImageIcon NoImage = new ImageIcon("src/Images/noImage.png");
+                    beverage[i].setIcon(NoImage);
+                }
             }
             else{
                 String newPath = "src/Images/"+vm.getBeverageName(i)+".png";  // Provide the path of the updated image
-                ImageIcon newImage = new ImageIcon(newPath);
-                beverage[i].setIcon(newImage);  // Set the new image for the button
+                File imageFile = new File(newPath);
+
+                // 음료 이미지 파일이 존재하는 경우
+                if(imageFile.exists()) {
+                    ImageIcon newImage = new ImageIcon(newPath);
+                    beverage[i].setIcon(newImage);  // Set the new image for the button}
+                }
+
+                // 음료 이미지가 없는 경우
+                else{
+                    ImageIcon NoImage = new ImageIcon("src/Images/noImage.png");
+                    beverage[i].setIcon(NoImage);
+                }
             }
         }
     }
 
+    // 음료 버튼 Text(가격) 변경
+    public static void chagnePrice(){
+        for(int i=0;i<beverage.length;i++)
+            beverage[i].setText(vm.getBeveragePrice(i)+"원");
+    }
     // 음료 구매 Panel
     public JPanel selectBeverage(){
         select = new JPanel();
@@ -132,7 +159,8 @@ public class StartMachine extends JFrame{
                     beverage[i].setHorizontalTextPosition(SwingConstants.CENTER);
                     beverage[i].setVerticalTextPosition(SwingConstants.BOTTOM);
                     beverage[i].setFocusPainted(false);
-
+                    
+                    // 음료 버튼을 누른 경우
                 beverage[i].addActionListener(e -> {
                     // 음료를 구매할 수 있는 경우
                     if(vm.currentInput() >= vm.getBeveragePrice(bIdx)) {
@@ -148,9 +176,23 @@ public class StartMachine extends JFrame{
                         else{
                             vm.buyBeverage(bIdx);
                             cMoney.setText(Integer.toString(vm.currentInput()) + "원");
-                            if(outLet != null)
-                                outLet.setIcon(new ImageIcon("src/Images/buy_"+vm.getBeverageName(bIdx)+".png"));
-                        }
+                            if(outLet != null){
+                                String outPath = "src/Images/buy_"+vm.getBeverageName(bIdx)+".png";
+                                File imageFile = new File(outPath);
+
+                                // 투출구 이미지 파일이 존재하는 경우
+                                if(imageFile.exists()) {
+                                    ImageIcon newImage = new ImageIcon(outPath);
+                                    outLet.setIcon(newImage);
+                                }
+
+                                // 음료 이미지가 없는 경우
+                                else{
+                                    ImageIcon NoImage = new ImageIcon("src/Images/투출구.png");
+                                    outLet.setIcon(NoImage);
+                                }
+                            }
+                            }
                     }
                     // 음료를 구매할 수 없는 경우
                     else{
@@ -159,7 +201,7 @@ public class StartMachine extends JFrame{
                                 "구매 불가",
                                 JOptionPane.INFORMATION_MESSAGE);
                     }
-                    changeImage();
+                    changeImage();  // 음료 재고에 따른 이미지 변경
                 });
                 select.add(beverage[i]);
             }
@@ -304,8 +346,6 @@ public class StartMachine extends JFrame{
 
         // Create the outLet button and set its position in the layered pane
         outLet = new JLabel(image);
-     //   outLet.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
-
         out.add(outLet);
 
         return out;

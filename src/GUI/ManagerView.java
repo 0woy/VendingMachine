@@ -38,18 +38,18 @@ public class ManagerView extends JFrame{
 
     private JPanel resetPW;         // 비밀번호 변경 화면
 
-    private JPanel manager;         // 관리자 화면
+    private JPanel managerView;         // 관리자 화면
 
     public ManagerView() {
         setTitle("관리자 메뉴");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        manager=new JPanel();
-        manager.setLayout(new BorderLayout());
-        manager.add(menuPanel(), BorderLayout.CENTER);
+        managerView=new JPanel();
+        managerView.setLayout(new BorderLayout());
+        managerView.add(menuPanel(), BorderLayout.CENTER);
         Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
-        manager.setBorder(border);
-        setContentPane(manager);
+        managerView.setBorder(border);
+        setContentPane(managerView);
 
         setLocation(600,100);
         setSize(850, 650);
@@ -74,9 +74,12 @@ public class ManagerView extends JFrame{
             if (selectedIndex == tabs.indexOfTab("로그아웃")) {
                 int option = JOptionPane.showConfirmDialog(null, "로그아웃 하시겠습니까?", "로그아웃", JOptionPane.YES_NO_OPTION);
                 if (option == JOptionPane.YES_OPTION) {
+                    StartMachine.changeImage(); // 자판기 음료 이미지 변경
+                    StartMachine.chagnePrice(); // 자판기 음료 가격 변경
+                    
                     JFrame managerView=this;
                     managerView.dispose();
-                  //  StartMachine.getInstance().repaintPanel();
+
                 } else {
                     tabs.setSelectedIndex(tabs.indexOfTab("매출 조회"));
                 }
@@ -309,9 +312,8 @@ public class ManagerView extends JFrame{
             public void keyTyped(KeyEvent e) {
                 // 숫자 BackSpace, Delete키만 입력 허용
                 char c = e.getKeyChar();
-                if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
+                if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE)
                     e.consume();
-                }
 
                 // 음료 가격은 5000원을 초과할 수는 없음
                 else if (Character.isDigit(c)) {
@@ -372,14 +374,14 @@ public class ManagerView extends JFrame{
         // Combobox에서 음료를 선택한 경우
         changeBeverage.addActionListener(e->{
             String bName = (String)changeBeverage.getSelectedItem();
-            newBeverage.setText(bName);   // 선택한 음료를 음료 이름 변경값지정
-            price.setValue(StartMachine.vm.getBeveragePrice(changeBeverage.getSelectedIndex())); // 선택한 음료의 가격을 음료 가격 변경값으로 지정
+            newBeverage.setText(bName);   // 선택한 음료를 변경할 음료 이름에 저장(초기화)
+            price.setValue(StartMachine.vm.getBeveragePrice(changeBeverage.getSelectedIndex())); // 선택한 음료의 가격을 변경할 음료 가격에 저장
         });
 
         // 취소 버튼 누를시
         buttons[0].addActionListener(e -> {
             StockCardLayout.show(StockCards,"Stocks"); // 음료 재고 조회 화면으로 이동
-            changeBeverage.setSelectedIndex(0);  // 음료 선택 값 초기화
+            changeBeverage.setSelectedIndex(0);              // 음료 선택 값 초기화
             newBeverage.setText(StartMachine.vm.getBeverageName(0));    // 음료 이름 변경 값 초기화
             price.setValue(StartMachine.vm.getBeveragePrice(0));        // 음료 가격 초기화
         });
@@ -414,13 +416,18 @@ public class ManagerView extends JFrame{
 
             // 음료의 이름을 변경한 경우
             else{
+
+                // 콤보박스의 내용 변경
                 SwingUtilities.invokeLater(() -> {
                     changeBeverage.setSelectedItem((String) newBeverage.getText());
                     changeBeverage.revalidate();
                     changeBeverage.repaint();
                 });
+                
+                // 기존 음료의 이름을 새로 지정한 이름으로 변경
                 StartMachine.vm.setBeverageName(currentIdx, (String)newBeverage.getText()); // 선택된 음료의 이름을 newBeverage로 변경
 
+                // price의 타입에 따라 달리 cast
                 Class<?> type = price.getValue().getClass();
                 int priceValue =0;
                 if (type == Long.class) {
@@ -434,11 +441,12 @@ public class ManagerView extends JFrame{
                 // 음료의 가격이 변경된 경우
                 if(priceValue != currentPrice){
                     StartMachine.vm.setBeveragePrice(currentIdx,priceValue); // 선택된 음료의 가격을 price로 변경
-                   // StartMachine.getInstance().getBeverageBtn(currentIdx).setText(Integer.toString(priceValue) + "원");
                 }
+
                 modifyBeverage.revalidate();
                 modifyBeverage.repaint();
             }
+
             // 재고 조회 테이블 업데이트
             tableModel.setValueAt(StartMachine.vm.getBeverageName(currentIdx), currentIdx, 0);
             // 재고 조회 화면으로 이동
@@ -540,7 +548,7 @@ public class ManagerView extends JFrame{
 
         // 화폐 이름 저장 및 가운데 정렬
         for(int i=0;i<add.length;i++){
-            name[i] = new JLabel(Integer.toString(StartMachine.vm.moneyValues()[i]));
+            name[i] = new JLabel(Integer.toString(StartMachine.vm.moneyValues()[i])+"원");
             name[i].setHorizontalAlignment(SwingConstants.CENTER);
 
             // 숫자만 받아을 수 있도록 format 설정
@@ -633,7 +641,109 @@ public class ManagerView extends JFrame{
     // 비밀번호 변경 Panel
     public JPanel PasswordView(){
         resetPW = new JPanel();
-        resetPW.add(new JLabel("비번 변경"));
+        GridLayout grid = new GridLayout(6,1,15,10);
+        resetPW.setLayout(grid);
+        Border border = BorderFactory.createEmptyBorder(20, 10, 10, 10);
+        resetPW.setBorder(border);
+
+        JLabel [] title = new JLabel[5];
+        JPasswordField currentPW = new JPasswordField();    // 현재 비밀번호 입력창
+        JPasswordField newPW = new JPasswordField();     // 새 비밀번호 입력창
+        JPasswordField againPW = new JPasswordField();     // 비밀번호 재입력창
+        currentPW.setEchoChar('*');
+        newPW.setEchoChar('*');
+        againPW.setEchoChar('*');
+
+        JButton button = new JButton("확인");   // 확인 버튼
+        button.setHorizontalAlignment(SwingConstants.CENTER);
+
+        title[0] = new JLabel("현재 비밀번호");
+        title[1] = new JLabel("새 비밀번호");
+        title[2] = new JLabel("비밀번호 재입력");
+        title[3] = new JLabel("비밀번호 변경");
+        title[4] = new JLabel("* 특수문자, 숫자 포함 8자리 이상");
+
+        // 제목 및 부제목 폰트 크기 설정
+        title[3].setFont(title[3].getFont().deriveFont(Font.PLAIN, 35));
+        title[4].setFont(title[4].getFont().deriveFont(Font.PLAIN, 13));
+
+        title[3].setHorizontalAlignment(SwingConstants.CENTER);
+        title[4].setHorizontalAlignment(SwingConstants.CENTER);
+
+        
+        // 확인 버튼을 누른 경우
+        button.addActionListener(e -> {
+            String checkPw = StartMachine.manager.getPassword();
+            // 현재 비밀번호 입력이 틀린 경우
+            if(!checkPw.equals(currentPW.getText())){
+                JOptionPane.showMessageDialog(null,
+                        "현재 비밀번호가 다릅니다.",
+                        "비밀번호 변경 불가",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // 비밀번호 재입력이 틀린 경우
+            if(!newPW.getText().equals(againPW.getText())){
+                JOptionPane.showMessageDialog(null,
+                        "새 비밀번호와 재입력한 비밀번호가 다릅니다.",
+                        "비밀번호 변경 불가",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // 비밀번호 재설정 함수 호출
+            boolean result = StartMachine.manager.setPassword(newPW.getText());
+
+            // 비밀번호 변경에 성공한 경우
+            if(result){
+                JOptionPane.showMessageDialog(null,
+                        "비밀번호가 변경되었습니다.",
+                        "비밀번호 변경",
+                        JOptionPane.INFORMATION_MESSAGE);
+                currentPW.setText("");
+                newPW.setText("");
+                againPW.setText("");
+            }
+            // 비밀번호 변경에 실패한 경우
+            else{
+                JOptionPane.showMessageDialog(null,
+                        "비밀번호 조건에 맞게 설정해 주세요",
+                        "비밀번호 변경 불가",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        
+        // 내부 Contents가 가운데 정렬이 되도록 구성
+        FlowLayout flow = new FlowLayout(FlowLayout.CENTER);
+        flow.setHgap(20);
+
+        // 현재 비밀번호 입력 패널
+        JPanel currentPwPanel = new JPanel(flow);
+        currentPW.setPreferredSize(new Dimension(150,30));
+        currentPwPanel.add(title[0]);
+        currentPwPanel.add(currentPW);
+
+        // 새 비밀번호 입력 패널
+        JPanel newPwPanel = new JPanel(flow);
+        newPW.setPreferredSize(new Dimension(150,30));
+        newPwPanel.add(title[1]);
+        newPwPanel.add(newPW);
+
+        // 비밀번호 재입력 패널
+        JPanel againPwPanel = new JPanel(flow);
+        againPW.setPreferredSize(new Dimension(150,30));
+        againPwPanel.add(title[2]);
+        againPwPanel.add(againPW);
+
+
+        resetPW.add(title[3]);
+        resetPW.add(title[4]);
+        resetPW.add(currentPwPanel);
+        resetPW.add(newPwPanel);
+        resetPW.add(againPwPanel);
+        resetPW.add(button);
+        
         return resetPW;
     }
 

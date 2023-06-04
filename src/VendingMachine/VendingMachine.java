@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class VendingMachine {
     private final int Max = 5000;   // 최대 투입 금액
-    private Integer input;              // 사용자가 투입한 금액 & 구매 후 남은 금액
+    private Integer input;          // 사용자가 투입한 금액 & 구매 후 남은 금액
     protected int Sales;            // 전체 일 매출액
     protected int totalSales;       // 전체 월 매출액
     private int checkBill;          // 1000원권 최대 투입 개수
@@ -32,6 +32,7 @@ public class VendingMachine {
     public int getBeverageStocks(int idx){return beverage[idx].getStock();}
     public int getBeverageSales(int idx){return beverage[idx].getSales();}
 
+    // 자판기 음료 속성 변경하기
     public void setBeverageName(int idx, String name){beverage[idx].setName(name);}
     public void setBeveragePrice(int idx,int price){beverage[idx].setPrice(price);}
     public void setBeverageStocks(int idx,int stocks){beverage[idx].setStocks(stocks);}
