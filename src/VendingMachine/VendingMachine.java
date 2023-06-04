@@ -1,5 +1,7 @@
 package VendingMachine;
 
+import java.util.HashMap;
+
 public class VendingMachine {
     private final int Max = 5000;   // 최대 투입 금액
     private Integer input;              // 사용자가 투입한 금액 & 구매 후 남은 금액
@@ -34,6 +36,22 @@ public class VendingMachine {
     public void setBeveragePrice(int idx,int price){beverage[idx].setPrice(price);}
     public void setBeverageStocks(int idx,int stocks){beverage[idx].setStocks(stocks);}
 
+    
+    // 자판기 잔돈 받아오기
+    public void setChangeStock(int idx, int plus){
+        int key =0;
+        switch (idx){
+            case 0: key = 1000; break;
+            case 1: key =500; break;
+            case 2: key =100; break;
+            case 3: key =50; break;
+            case 4: key =10; break;
+        }
+        change.setChange(key,plus);
+    }
+
+    // 자판기 수금하기
+    public int MoneyToManager(){return change.moneyTomanager();}
 
     // 화폐 투입 기능(잔돈 통은 사용자가 넣은 화폐만큼 추가됨)
     public int insertMoney(int won){
@@ -92,6 +110,11 @@ public class VendingMachine {
     // 화폐 단위 반환
     public int[] moneyValues(){
         return new int[]{1000,500,100,50,10};
+    }
+
+    // 남은 화폐 반환
+    public HashMap<Integer, Integer> getChangeStock(){
+        return change.getChanges();
     }
 
     // 잔돈 반환 기능

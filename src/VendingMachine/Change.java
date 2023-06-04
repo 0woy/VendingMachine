@@ -19,7 +19,7 @@ public class Change {
     public HashMap<Integer, Integer> getChanges(){return money;}
 
     // 화폐 일괄 충전
-    public void fullChanges(){
+    public void setChangesAll(){
      for(Integer key: money.keySet()){
          if(money.get(key) >=5) continue;
          else money.put(key,5);
@@ -27,8 +27,11 @@ public class Change {
     }
 
     // 특정 화폐 개별 충전
-    public void fullChanges(int key){
-        money.put(key,5);
+    public void setChange(int key, int idx){
+        if(idx == -1)
+            money.put(key,5);
+        else
+            money.put(key,idx);
     }
 
     // 사용자가 돈을 투입한 경우 해당 화폐 수 증가
@@ -46,10 +49,11 @@ public class Change {
         }
 
         if(isReturn < input)
-            throw new Exception("잔돈이 부족해 반환 불가합니다.");
+            throw new Exception("잔돈이 부족해 반환  불가합니다.");
         else {
             for(int i=0;i<won.length;i++){
                 returnChange[i] = Math.min(input/won[i], money.get(won[i]));
+                money.put(won[i],money.get(won[i])-returnChange[i]);
                 input %=won[i];
             }
         }
@@ -58,32 +62,29 @@ public class Change {
 
     // 수금
     public int moneyTomanager(){
-        int idx=0;
         int sum=0;
         for(Integer key: money.keySet()) {
-            if (money.get(key) <= 5) {
-                fullChanges(key);
-                idx++;
-                continue;
+            if (money.get(key) < 5) {
+                setChange(key,-1);
             } else {
-                switch (idx) {
-                    case 0:
+                switch (key) {
+                    case 10:
                         sum += 10 * (money.get(key) - 5);
                         break;
-                    case 1:
+                    case 50:
                         sum += 50 * (money.get(key) - 5);
                         break;
-                    case 2:
+                    case 100:
                         sum += 100 * (money.get(key) - 5);
                         break;
-                    case 3:
+                    case 500:
                         sum += 500 * (money.get(key) - 5);
                         break;
-                    case 4:
+                    case 1000:
                         sum += 1000 * (money.get(key) - 5);
                         break;
                 }
-                idx++;
+                money.put(key,5);
             }
         }
         return sum;

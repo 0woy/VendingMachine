@@ -1,26 +1,23 @@
 package GUI;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.jar.JarEntry;
-import javax.imageio.*;
 import javax.swing.border.Border;
 
 import VendingMachine.VendingMachine;
-import com.sun.tools.jconsole.JConsoleContext;
 import VendingMachine.Manager;
 
 public class StartMachine extends JFrame{
-
+    
     private Main main;              // GUI.Main 클래스
     static Manager manager;         // 관리자 클래스
-
+    private static StartMachine startInstance;  //해당 클래스의 인스턴스
     private JPanel beveragePanel;   // 음료 구매 화면
+    private JPanel select;          // 음료 버튼 설정 화면
     private JPanel userPanel;       // 잔돈 반환 & 화폐 투입
-    private JPanel outPanel;        // 음료 투출
+
+    private JPanel outPanel;        // 음료 투출 패널
+    private JLabel outLet;          // 음료 투출구
+
     private JPanel managePanel;     // 관리자 메뉴
     private JPanel start;           // 자판기 화면
     
@@ -59,6 +56,19 @@ public class StartMachine extends JFrame{
         setVisible(true);
     }
 
+    public static StartMachine getInstance(){
+        if(startInstance ==null){
+            startInstance =new StartMachine();
+        }
+        return startInstance;
+    }
+
+    public void repaintPanel() {
+        start.remove(beveragePanel);
+        beveragePanel = selectBeverage();
+       // start.add(beveragePanel, BorderLayout.NORTH);
+    }
+
     // 음료 Panel
     public JPanel BeveragePanel(){
         JPanel beverage = new JPanel();
@@ -66,14 +76,14 @@ public class StartMachine extends JFrame{
 
         Border border = BorderFactory.createLineBorder(Color.blue,5);
         beverage.setBorder(border);
-        beverage.add(selectBeverage());
+        select = selectBeverage();
+        beverage.add(select);
         return beverage;
     }
 
     // 음료 재고 상태 & 사용자 투입 금액에 따른 음료 이미지 변환
     public void changeImage(){
         for(int i=0;i<beverage.length;i++){
-
             if(vm.currentInput() < vm.getBeveragePrice(i) && vm.currentStock(i)>0){
                 String newPath = "src/Images/no_"+vm.getBeverageName(i)+".png";  // Provide the path of the updated image
                 ImageIcon newImage = new ImageIcon(newPath);
@@ -94,7 +104,7 @@ public class StartMachine extends JFrame{
 
     // 음료 구매 Panel
     public JPanel selectBeverage(){
-        JPanel select = new JPanel();
+        select = new JPanel();
         GridLayout grid = new GridLayout(2,3);
         grid.setHgap(10);
         grid.setVgap(10);
@@ -126,7 +136,6 @@ public class StartMachine extends JFrame{
                 beverage[i].addActionListener(e -> {
                     // 음료를 구매할 수 있는 경우
                     if(vm.currentInput() >= vm.getBeveragePrice(bIdx)) {
-
                         // 재고 불충분
                         if(vm.getBeverageStocks(bIdx)<=0){
                             JOptionPane.showMessageDialog(null,
@@ -139,6 +148,8 @@ public class StartMachine extends JFrame{
                         else{
                             vm.buyBeverage(bIdx);
                             cMoney.setText(Integer.toString(vm.currentInput()) + "원");
+                            if(outLet != null)
+                                outLet.setIcon(new ImageIcon("src/Images/buy_"+vm.getBeverageName(bIdx)+".png"));
                         }
                     }
                     // 음료를 구매할 수 없는 경우
@@ -159,7 +170,6 @@ public class StartMachine extends JFrame{
     // 잔돈 반환 & 화폐 투입 Panel
     public JPanel userPanel(){
         JPanel user =new JPanel();
-        //user.setPreferredSize(new Dimension(150,150));
         user.setLayout(new FlowLayout(FlowLayout.RIGHT,20,0));
 
         JButton returnChange = new JButton("잔돈 반환");
@@ -212,6 +222,7 @@ public class StartMachine extends JFrame{
                     vm.freeInput();         // input 동적 할당 해제
                     vm.setInput();          // 반환 후에도 음료를 구매할 수 있도록 input 동적할당
                     changeImage();
+                    outLet.setIcon(new ImageIcon("src/Images/투출구.png"));
                 });
 
         user.add(returnChange);
@@ -291,9 +302,9 @@ public class StartMachine extends JFrame{
         ImageIcon image = new ImageIcon("src/Images/투출구.png");
         out.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-        JButton outLet = new JButton("", image);
-        outLet.setPreferredSize(new Dimension(image.getIconWidth(), image.getIconHeight()));
-        outLet.setText("");
+        // Create the outLet button and set its position in the layered pane
+        outLet = new JLabel(image);
+     //   outLet.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
 
         out.add(outLet);
 
