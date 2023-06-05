@@ -1,48 +1,44 @@
 package GUI;
-import VendingMachine.Manager;
-import VendingMachine.VendingMachine;
-import GUI.StartMachine;
+import FileIO.Datas;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.regex.*;
+import java.util.*;
+import java.text.*;
 import java.awt.*;
 
 public class ManagerView extends JFrame{
+    private Datas dataFile;              // 매출 등 파일 조회
     private Main main;
     private StartMachine startMachine;
 
-    private JTabbedPane tabs;       // 화면 분리
-    private CardLayout StockCardLayout;
-    private JPanel StockCards;
-    private CardLayout MoneyCardLayout;
+    private JTabbedPane tabs;           //메뉴바를 통한 화면 이동
+    private CardLayout StockCardLayout; // 재고 조회 화면 내 요소(재고 조회, 재고 보충 등) 
+    private JPanel StockCards;         
+    
+    private CardLayout MoneyCardLayout; // 잔돈 조회 화면 내 요소(잔돈 조회, 잔돈 보충, 수금)
     private JPanel MoneyCard;
 
-    private JPanel Input_pw;        // 관리자 인증 화면
     private JPanel Sales;           // 매출 현황 화면
 
-    private JPanel Stocks;          // 재고 파악, 음료 수정 화면
+    private JPanel Stocks;          // 재고 파악, 음료 속성 변경 화면
     private JPanel supplyStocks;    // 재고 보충 화면
     private JPanel modifyBeverage;  // 음료 속성 변경 화면
 
-    private JPanel Money;           // 잔돈 & 수금 화면
+    private JPanel Money;           // 잔돈 조회, 잔돈 보충 화면
     private JPanel supplyMoney;     // 잔돈 보충 화면
 
     private JPanel resetPW;         // 비밀번호 변경 화면
 
-    private JPanel managerView;         // 관리자 화면
+    private JPanel managerView;     // 관리자 화면
 
     public ManagerView() {
         setTitle("관리자 메뉴");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        dataFile = new Datas();
 
         managerView=new JPanel();
         managerView.setLayout(new BorderLayout());
@@ -91,7 +87,57 @@ public class ManagerView extends JFrame{
     // 전체&음료별 일/월 매출 현황 테이블 Panel
     public JPanel SalesView(){
         Sales = new JPanel();
-        Sales.add(new JLabel("매출조회~~"));
+        BorderLayout flow = new BorderLayout(20,30);
+        Sales.setLayout(flow);
+
+        Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+        Sales.setBorder(border);
+        
+        JLabel totalLabel = new JLabel();   // 전체 매출액
+        
+        // Read-Only 일/월별 매출
+        DefaultTableModel tableModel = new DefaultTableModel() {
+            @Override
+        public boolean isCellEditable(int row, int column) {return false;}
+        };
+
+        String[] columnNames= new String[7];
+        columnNames[0] ="날짜";
+        for(int i =0;i<5;i++)
+                columnNames[i+1] =StartMachine.vm.getBeverageName(i);
+        columnNames[6] = "총매출";
+
+        tableModel.setColumnIdentifiers(columnNames);
+        JTable table = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        JComboBox<String> title = new JComboBox<>();
+        for(int i=1;i<13;i++)
+            title.addItem(i+"월");
+
+        title.addActionListener(e->{
+            int month = title.getSelectedIndex();
+            String[][] newData = dataFile.readSales("Month_"+String.valueOf(month+1));
+            if(newData!=null)
+                tableModel.setRowCount(0);
+
+                for(int i=0;i<newData.length;i++)
+                    tableModel.addRow(newData[i]);
+
+            int total = 0;
+            for (int i = 0; i < table.getRowCount(); i++) {
+                String value = (String) table.getValueAt(i, 6);
+                int sales = Integer.parseInt(value.split(" ")[0]);
+                total += sales;
+            }
+            totalLabel.setText("전체 매출액: " + total + "원");
+        });
+
+        title.setFont(title.getFont().deriveFont(Font.PLAIN, 16));
+        Sales.add(title, BorderLayout.NORTH);
+        Sales.add(scrollPane,BorderLayout.CENTER);
+        Sales.add(totalLabel,BorderLayout.SOUTH);
+
         return Sales;
     }
 
@@ -137,7 +183,6 @@ public class ManagerView extends JFrame{
         // 재고 보충 패널
         supplyStocks = SupplyStocksView(tableModel);
         modifyBeverage = ModifyBeverage(tableModel);
-
 
         // CardLayout 재고 확인 & 보충 화면 구성
         StockCardLayout = new CardLayout();
@@ -655,7 +700,6 @@ public class ManagerView extends JFrame{
         againPW.setEchoChar('*');
 
         JButton button = new JButton("확인");   // 확인 버튼
-        button.setHorizontalAlignment(SwingConstants.CENTER);
 
         title[0] = new JLabel("현재 비밀번호");
         title[1] = new JLabel("새 비밀번호");
@@ -736,13 +780,18 @@ public class ManagerView extends JFrame{
         againPwPanel.add(title[2]);
         againPwPanel.add(againPW);
 
+        // 비밀번호 재입력 패널
+        JPanel buttonPanel = new JPanel(flow);
+        button.setPreferredSize(new Dimension(150,30));
+        buttonPanel.add(button);
+
 
         resetPW.add(title[3]);
         resetPW.add(title[4]);
         resetPW.add(currentPwPanel);
         resetPW.add(newPwPanel);
         resetPW.add(againPwPanel);
-        resetPW.add(button);
+        resetPW.add(buttonPanel);
         
         return resetPW;
     }

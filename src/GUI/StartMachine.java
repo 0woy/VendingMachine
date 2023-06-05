@@ -22,7 +22,7 @@ public class StartMachine extends JFrame{
     private JPanel managePanel;     // 관리자 메뉴
     private JPanel start;           // 자판기 화면
     
-    protected static VendingMachine vm;     // 음료 속성을 가져오기 위한 변수
+    public static VendingMachine vm;     // 음료 속성을 가져오기 위한 변수
     private JLabel cMoney;                  // 현재 사용자가 투입 & 사용 금액
     private static JButton[] beverage;      // 자판기 음료 버튼
 
@@ -188,7 +188,7 @@ public class StartMachine extends JFrame{
 
                                 // 음료 이미지가 없는 경우
                                 else{
-                                    ImageIcon NoImage = new ImageIcon("src/Images/투출구.png");
+                                    ImageIcon NoImage = new ImageIcon("src/Images/buy_noImage.png");
                                     outLet.setIcon(NoImage);
                                 }
                             }

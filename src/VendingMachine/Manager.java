@@ -9,7 +9,7 @@ public class Manager extends VendingMachine {
     private String password;    // 비밀번호
 
     public Manager(){
-        this.password ="admin@123"; // 초기 비밀번호
+        this.password ="1"; // 초기 비밀번호
     }
 
     // 음료 일/월매출
