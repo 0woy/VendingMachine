@@ -118,17 +118,20 @@ public class ManagerView extends JFrame{
         title.addActionListener(e->{
             int month = title.getSelectedIndex();
             String[][] newData = dataFile.readSales("Month_"+String.valueOf(month+1));
-            if(newData!=null)
-                tableModel.setRowCount(0);
+            tableModel.setRowCount(0);
+            int total = 0;
+            if(newData!=null) {
 
-                for(int i=0;i<newData.length;i++)
+                for (int i = 0; i < newData.length; i++)
                     tableModel.addRow(newData[i]);
 
-            int total = 0;
-            for (int i = 0; i < table.getRowCount(); i++) {
-                String value = (String) table.getValueAt(i, 6);
-                int sales = Integer.parseInt(value.split(" ")[0]);
-                total += sales;
+
+                for (int i = 0; i < table.getRowCount()-1; i++) {
+                    String value = (String) table.getValueAt(i, 6);
+                    int sales = Integer.parseInt(value.split(" ")[0]);
+                    total += sales;
+                }
+
             }
             totalLabel.setText("전체 매출액: " + total + "원");
         });

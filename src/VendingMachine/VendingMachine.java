@@ -1,20 +1,18 @@
 package VendingMachine;
 
 import java.util.HashMap;
+import FileIO.Datas;
 
 public class VendingMachine {
     private final int Max = 5000;   // 최대 투입 금액
     private Integer input;          // 사용자가 투입한 금액 & 구매 후 남은 금액
-    protected int Sales;            // 전체 일 매출액
-    protected int totalSales;       // 전체 월 매출액
     private int checkBill;          // 1000원권 최대 투입 개수
     private Change change;          // 자판기 내의 잔돈
     private Beverage [] beverage;
-
+    private Datas writeData;        // 음료 판매 개수 파일 작성
     public VendingMachine(){
+        writeData = new Datas();
         this.input= Integer.valueOf(0); // 동적할당
-        this.Sales=0;
-        this.totalSales=0;
         this.checkBill = 0;
         this.change = new Change();
         this.beverage = new Beverage[]{
@@ -98,14 +96,12 @@ public class VendingMachine {
     // 현재 음료의 재고
     public int currentStock(int idx){return beverage[idx].getStock();}
 
-    // 음료 구입 기능
+    // 음료 구입 기능 & 파일 입력
     public void buyBeverage(int i){
-
         input -= beverage[i].getPrice();    // 음료 가격만큼 사용 금액 감소
-        Sales += beverage[i].getPrice();    // 음료 가격만큼 판매액 증가
         beverage[i].setSellCount();         // 해당 음료 팔린 개수 증가
         beverage[i].setStocks(-1);          // 해당 음료 재고 1개 감소
-
+        Datas.writeSales(i);                // 파일 입력
     }
 
     // 화폐 단위 반환
