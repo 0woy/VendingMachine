@@ -8,10 +8,9 @@ public class VendingMachine {
     private Integer input;          // 사용자가 투입한 금액 & 구매 후 남은 금액
     private int checkBill;          // 1000원권 최대 투입 개수
     private Change change;          // 자판기 내의 잔돈
-    private Beverage [] beverage;
-    private Datas writeData;        // 음료 판매 개수 파일 작성
+    private Beverage [] beverage;   // 음료 배열
+
     public VendingMachine(){
-        writeData = new Datas();
         this.input= Integer.valueOf(0); // 동적할당
         this.checkBill = 0;
         this.change = new Change();
@@ -28,7 +27,6 @@ public class VendingMachine {
     public String getBeverageName(int idx){return beverage[idx].getName();}
     public int getBeveragePrice(int idx){return beverage[idx].getPrice();}
     public int getBeverageStocks(int idx){return beverage[idx].getStock();}
-    public int getBeverageSales(int idx){return beverage[idx].getSales();}
 
     // 자판기 음료 속성 변경하기
     public void setBeverageName(int idx, String name){beverage[idx].setName(name);}
@@ -36,7 +34,7 @@ public class VendingMachine {
     public void setBeverageStocks(int idx,int stocks){beverage[idx].setStocks(stocks);}
 
     
-    // 자판기 잔돈 받아오기
+    // 자판기 잔돈 보충하기
     public void setChangeStock(int idx, int plus){
         int key =0;
         switch (idx){
@@ -46,6 +44,7 @@ public class VendingMachine {
             case 3: key =50; break;
             case 4: key =10; break;
         }
+        // 보충할 화폐와, 보충 개수를 받아와 잔돈 보충
         change.setChange(key,plus);
     }
 
@@ -55,11 +54,12 @@ public class VendingMachine {
     // 화폐 투입 기능(잔돈 통은 사용자가 넣은 화폐만큼 추가됨)
     public int insertMoney(int won){
 
+        // 5000원을 초과한 경우 0 반환
         if(input+won > Max){
-            System.out.println();
             return 0;
         }
 
+        // 투입된 금액 만큼 잔돈 추가 및 투입 금액 증가
         switch (won){
             case 10:
                 change.inputMoney(10);
@@ -78,6 +78,7 @@ public class VendingMachine {
                 input+=won;
                 break;
             case 1000:
+                // 3개를 초과하여 투입한 경우 1 반환
                 if(checkBill >= 3)
                     return 1;
                 else {
@@ -92,9 +93,6 @@ public class VendingMachine {
 
     // 현재 사용자가 투입 & 남은 돈 반환
     public int currentInput(){return input;}
-    
-    // 현재 음료의 재고
-    public int currentStock(int idx){return beverage[idx].getStock();}
 
     // 음료 구입 기능 & 파일 입력
     public void buyBeverage(int i){

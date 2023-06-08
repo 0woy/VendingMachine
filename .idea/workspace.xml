@@ -7,9 +7,12 @@
     <list default="true" id="20bedd70-200a-4112-8727-0ec4952a6734" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/FileIO/Datas.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FileIO/Datas.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FileIO/Month_5.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/FileIO/Month_5.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FileIO/Month_6.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FileIO/Month_6.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/FileIO/Month_6.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GUI/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GUI/ManagerView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/ManagerView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GUI/StartMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/StartMachine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/VendingMachine/Beverage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VendingMachine/Beverage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/VendingMachine/Change.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VendingMachine/Change.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/VendingMachine/Manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VendingMachine/Manager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/VendingMachine/VendingMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/VendingMachine/VendingMachine.java" afterDir="false" />
     </list>
@@ -109,7 +112,8 @@
       <workItem from="1685882429193" duration="8752000" />
       <workItem from="1685895901464" duration="10372000" />
       <workItem from="1685983554684" duration="10692000" />
-      <workItem from="1686033538427" duration="5242000" />
+      <workItem from="1686033538427" duration="12979000" />
+      <workItem from="1686216817432" duration="15723000" />
     </task>
     <servers />
   </component>
@@ -117,15 +121,6 @@
     <option name="version" value="3" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/VendingMachine/VendingMachine.java</url>
-          <line>103</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
         <watch expression="rows" />

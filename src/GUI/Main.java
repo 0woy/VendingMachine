@@ -3,20 +3,17 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Main extends JFrame {
-    static ManagerView managerPage;
-    static StartMachine startPage;
+    static StartMachine startMachinPage;
 
-    public StartMachine getStartInstance() {
-        return startPage;
-    }
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
+                // 모니터에 보이는 화면 설정
                 try {
                     Main main = new Main();
-                    startPage = new StartMachine();
-                    startPage.changeView(main);
+                    startMachinPage = new StartMachine();
+                    startMachinPage.changeView(main);
                 }catch (Exception e){
                     e.printStackTrace();
                 }

@@ -10,13 +10,12 @@ import java.text.*;
 import java.awt.*;
 
 public class ManagerView extends JFrame{
-    private Datas dataFile;              // 매출 등 파일 조회
-    private Main main;
-    private StartMachine startMachine;
+    private Datas dataFile; // 매출 등 파일 조회
+    private Main main;      //
 
-    private JTabbedPane tabs;           //메뉴바를 통한 화면 이동
+    private JTabbedPane tabs;           // 메뉴바를 통한 화면 이동
     private CardLayout StockCardLayout; // 재고 조회 화면 내 요소(재고 조회, 재고 보충 등) 
-    private JPanel StockCards;         
+    private JPanel StockCards;
     
     private CardLayout MoneyCardLayout; // 잔돈 조회 화면 내 요소(잔돈 조회, 잔돈 보충, 수금)
     private JPanel MoneyCard;
@@ -93,7 +92,7 @@ public class ManagerView extends JFrame{
         Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
         Sales.setBorder(border);
         
-        JLabel totalLabel = new JLabel();   // 전체 매출액
+        JLabel totalLabel = new JLabel();   // 화면 하단에 전체 매출액 표시
         
         // Read-Only 일/월별 매출
         DefaultTableModel tableModel = new DefaultTableModel() {
@@ -101,6 +100,7 @@ public class ManagerView extends JFrame{
         public boolean isCellEditable(int row, int column) {return false;}
         };
 
+        // Table에 Column 저장
         String[] columnNames= new String[7];
         columnNames[0] ="날짜";
         for(int i =0;i<5;i++)
@@ -111,31 +111,35 @@ public class ManagerView extends JFrame{
         JTable table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
 
+        // Combobox에 1~12월 저장
         JComboBox<String> title = new JComboBox<>();
         for(int i=1;i<13;i++)
             title.addItem(i+"월");
 
+        // 매출을 확인할 월을 선택한 경우
         title.addActionListener(e->{
+
+            // month에 선택한 월 저장
             int month = title.getSelectedIndex();
+            // 선택한 월의 파일 읽어옴
             String[][] newData = dataFile.readSales("Month_"+String.valueOf(month+1));
+            // 테이블 초기화
             tableModel.setRowCount(0);
-            int total = 0;
+
+            // 데이터가 존재하는 경우
             if(newData!=null) {
-
                 for (int i = 0; i < newData.length; i++)
-                    tableModel.addRow(newData[i]);
-
-
-                for (int i = 0; i < table.getRowCount()-1; i++) {
-                    String value = (String) table.getValueAt(i, 6);
-                    int sales = Integer.parseInt(value.split(" ")[0]);
-                    total += sales;
-                }
-
+                    tableModel.addRow(newData[i]);  // 테이블에 데이터 삽입
+                totalLabel.setText("전체 매출액: "+(String)table.getValueAt(table.getRowCount()-1,6));   // 전체 매출액 저장
             }
-            totalLabel.setText("전체 매출액: " + total + "원");
+
+            // 데이터가 없는 경우 전체 매출액 0원
+            else
+                totalLabel.setText("전체 매출액: 0원");
+
         });
 
+        // 화면에 표시
         title.setFont(title.getFont().deriveFont(Font.PLAIN, 16));
         Sales.add(title, BorderLayout.NORTH);
         Sales.add(scrollPane,BorderLayout.CENTER);
@@ -168,8 +172,27 @@ public class ManagerView extends JFrame{
             }
         };
 
+        String [] soldoutColumn = {"재고 소진 일자","음료 이름"};   // 재고 소진 테이블의 열 제목
+        DefaultTableModel soldoutTableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        soldoutTableModel.setColumnIdentifiers(soldoutColumn);  // 열 제목 저장
+
+        String[][] soldoutData = dataFile.readSoldout("Soldout");
+        if(soldoutData!=null){
+            for(int i=0;i<soldoutData.length;i++)
+                soldoutTableModel.addRow(soldoutData[i]);
+        }
+
+
         JTable table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);    // 스크롤 가능
+
+        JTable soldoutTable = new JTable(soldoutTableModel);
+        JScrollPane soldoutScrollpane = new JScrollPane(soldoutTable);
 
         JLabel title = new JLabel("음료 재고 현황");
         JButton Supplement = new JButton("재고 보충");
@@ -179,8 +202,13 @@ public class ManagerView extends JFrame{
         buttonPanel.add(Supplement);
         buttonPanel.add(Modify);
 
+        // 음료 재고 및 재고 소진 일 테이블 패널
+        JPanel tablePanel = new JPanel(new GridLayout(2, 1));
+        tablePanel.add(scrollPane);
+        tablePanel.add(soldoutScrollpane);
+
         Stocks.add(titlePanel, BorderLayout.NORTH);
-        Stocks.add(scrollPane, BorderLayout.CENTER);
+        Stocks.add(tablePanel, BorderLayout.CENTER);
         Stocks.add(buttonPanel, BorderLayout.SOUTH);
         
         // 재고 보충 패널
@@ -295,7 +323,7 @@ public class ManagerView extends JFrame{
             for(int i=0;i<add.length;i++) {
                 Number value = (Number) add[i].getValue();
                 int plus = value.intValue();
-                int current = StartMachine.vm.currentStock(i);
+                int current = StartMachine.vm.getBeverageStocks(i);
                 StartMachine.vm.setBeverageStocks(i, plus);
                 
                 // 재고 조회 테이블 업데이트
@@ -546,15 +574,15 @@ public class ManagerView extends JFrame{
         
         supplyMoney = supplyMoneyView(tableModel); // 잔돈 보충 패널
 
-        // CardLayout 재고 확인 & 보충 화면 구성
+        // CardLayout 잔돈 현황 & 보충 화면 구성
         MoneyCardLayout = new CardLayout();
         MoneyCard = new JPanel(MoneyCardLayout);
         MoneyCard.add(Money, "Money");
-        MoneyCard.add(supplyMoney, "addMoney");
+        MoneyCard.add(supplyMoney, "supplyMoney");
 
         // 잔돈 보충 클릭시 화면 이동
         Supplement.addActionListener(e -> {
-            MoneyCardLayout.show(MoneyCard, "addMoney");
+            MoneyCardLayout.show(MoneyCard, "supplyMoney");
         });
 
         // 수금 클릭시 수금된 금액 표시
@@ -570,7 +598,7 @@ public class ManagerView extends JFrame{
                     JOptionPane.INFORMATION_MESSAGE);
 
             HashMap<Integer,Integer> updateStock = StartMachine.vm.getChangeStock();
-            // 재고 조회 테이블 업데이트
+            // 잔돈 조회 테이블 업데이트
             for(int i=0;i<tableModel.getRowCount();i++) {
                 int rest = updateStock.get(tableModel.getValueAt(i, 0));
                 tableModel.setValueAt(rest, i, 1);
@@ -591,8 +619,11 @@ public class ManagerView extends JFrame{
         Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
         supplyMoney.setBorder(border);
 
+        // 보충할 잔돈의 이름 저장할 name 배열
         JLabel [] name = new JLabel[5];
-        JFormattedTextField [] add = new JFormattedTextField[5];    // 숫자만 받기 위해 JFormatted 사용
+
+        // 숫자만 받기 위해 JFormatted 사용
+        JFormattedTextField [] add = new JFormattedTextField[5];
 
         // 화폐 이름 저장 및 가운데 정렬
         for(int i=0;i<add.length;i++){
@@ -635,7 +666,7 @@ public class ManagerView extends JFrame{
                         int caretPosition = textField.getCaretPosition();
                         String newText = currentText.substring(0, caretPosition) + c + currentText.substring(caretPosition);
                         int value = Integer.parseInt(newText);
-                        if (value > 10) {
+                        if (value > 5) {
                             JOptionPane.showMessageDialog(null,
                                     "5개를 초과하여 잔돈을 충전할 수 없습니다.",
                                     "잔돈 충전 불가",
@@ -696,8 +727,8 @@ public class ManagerView extends JFrame{
 
         JLabel [] title = new JLabel[5];
         JPasswordField currentPW = new JPasswordField();    // 현재 비밀번호 입력창
-        JPasswordField newPW = new JPasswordField();     // 새 비밀번호 입력창
-        JPasswordField againPW = new JPasswordField();     // 비밀번호 재입력창
+        JPasswordField newPW = new JPasswordField();        // 새 비밀번호 입력창
+        JPasswordField againPW = new JPasswordField();      // 비밀번호 재입력창
         currentPW.setEchoChar('*');
         newPW.setEchoChar('*');
         againPW.setEchoChar('*');
