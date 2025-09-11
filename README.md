@@ -19,8 +19,7 @@
 
 * **Language**: Java 11+
 * **Build**: Gradle (기본 제공 없음, IDE 실행 가능)
-* **IDE**: IntelliJ / Eclipse
-* **Test**: JUnit (추가 가능)
+* **IDE**: IntelliJ 
 
 ---
 
@@ -123,8 +122,6 @@ java Main
 ---
 
 ## 📎 스크린샷 (실행 예시)
-
-> 모든 이미지를 \*\*가로 320px(팝업류 240px)\*\*로 통일하고, 중앙 정렬/캡션을 통일했습니다. (GitHub Markdown은 CSS 미지원이라 `<img width>`만 사용)
 
 <table>
 <tr><td align="center">
